@@ -18,10 +18,10 @@
 
 - [ ] Confirm team name, contributors, roles and any eligibility requirements.
 - [ ] Check current official hackathon rules/deadline/track requirements manually.
-- [ ] Capture real wide/narrow screenshots using screenshots.md; inspect for secrets.
+- [ ] Complete narrow-layout visual checks below; inspect any new capture for secrets.
 - [ ] Rehearse/record the three-minute script with an actual timer.
-- [ ] Add the real recording link and screenshot images to README.
-- [ ] Optionally authorize a provider call; inspect actual provider/grounding warnings.
+- [ ] Add a real recording link only if required by the submission; existing screenshots are linked in README.
+- [ ] If cloud success is desired, repair credentials privately and authorize a new check; the previous Groq attempt failed authentication.
 - [ ] If a provider fails, retain the honest deterministic fallback demonstration.
 - [ ] Review commits and run the final commands on the intended submission checkout.
 - [ ] Manually push only after review; inspect real quality CI results.
@@ -33,3 +33,25 @@
 Deployment is optional and not configured. Prefer a local screen-share/recording;
 any hosted demo needs a separate authentication/TLS/private-database design.
 The submission is not a production SRE service or a promise of prize placement.
+
+## Screenshots and visual checks
+
+Five unaltered desktop screenshots were captured from the running local app in
+Brave on 2026-10-16, after the owner temporarily granted access. They show only
+the fictional demo and local browser chrome and were checked for visible keys.
+
+| Existing capture | Evidence |
+|---|---|
+| [Overview](assets/dashboard-overview.png) | Landing state and three demo actions |
+| [Token Vault result](assets/token-vault-investigation.png) | Critical 91.62, eleven services, six customers, native engine |
+| [Cypher receipts](assets/falkordb-evidence.png) | Actual templates, safe parameters and durations |
+| [Customer path](assets/customer-evidence.png) | Token Vault → Subscription Service → Renewal → Atlas; three hops |
+| [Cascade simulation](assets/cascade-simulation.png) | Fictional after-mitigation state, graph and playback controls |
+
+The three-click desktop flow was exercised. Narrow/mobile layouts, every hover,
+keyboard-only navigation and WCAG compliance were not established by these images.
+Additional checks: about 390×844 viewport, wrapped controls, accessible sidebar,
+scrolling tables/graph, visible focus, readable legend, empty/single-node/filter-empty
+states. Automated AppTest covers behavior but not pixel appearance.
+Store only genuine inspected PNG/WebP captures in assets/, link with descriptive
+captions/alt text, and keep credentials, account panels and unrelated tabs out.

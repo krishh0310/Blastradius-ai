@@ -59,7 +59,7 @@ Real Brave captures: [overview](docs/assets/dashboard-overview.png),
 [native query receipts](docs/assets/falkordb-evidence.png),
 [customer path](docs/assets/customer-evidence.png), and
 [fictional cascade](docs/assets/cascade-simulation.png).
-[Capture status and remaining narrow-layout checks](docs/screenshots.md).
+[Capture status and remaining narrow-layout checks](docs/submission-checklist.md#screenshots-and-visual-checks).
 
 Built for **Graph Hacks · Connected Data · WeMakeDevs and FalkorDB**.
 [Native query semantics, fallback and limits](docs/native-falkordb.md).
@@ -181,7 +181,7 @@ The exposure score is deterministic, **not an outage probability**:
 Normalized factors sum to at most 100; declared healthy alternatives subtract up
 to 15 points. Optional-only exposure receives reduced weight. Low <25, Medium
 <50, High <75, Critical ≥75. Every contribution is displayed.
-[Exact formula and limitations](docs/analytics-and-reports.md).
+[Exact formula and limitations](docs/graph-schema.md#risk-score).
 
 ## AI grounding and privacy
 
@@ -204,7 +204,7 @@ deployments can support assumed failover, but do not prove readiness or capacity
 Compare fictional isolation, read-only mode or other eligible actions.
 
 No simulation changes the seeded graph or executes infrastructure actions.
-[Simulation assumptions and controls](docs/simulation.md).
+[Simulation assumptions and controls](docs/graph-schema.md#simulated-cascade-and-mitigation).
 
 ## Technology and repository
 
@@ -325,22 +325,16 @@ pip-audit --cache-dir .audit-cache --progress-spinner off
 
 Coverage is enforced at 80%. Provider calls are mocked. Integration tests require
 the seeded local graph; importer tests create uniquely named disposable graphs.
-[Security boundaries](docs/hardening.md) and [phase baseline](docs/baseline-audit.md).
+[Security boundaries and CI](docs/hardening.md#ci-and-grounded-provider-boundary):
+quality checks run on push/pull request; disposable FalkorDB integration is manual
+opt-in. No remote execution or passing badge is claimed.
 
-[Latest technical audit: 90/100 internal assessment](docs/final-audit.md).
-
-[Development history](docs/development-history.md) and
-[conceptual reference review](docs/reference-review.md) keep phase records and
-external research separate from product claims. The latest benchmark also reports
-cached Python fallback costs; it does not establish a native database speedup.
-
-[CI workflow and manual repository choices](docs/repository-quality.md): quality
-checks run on push/pull request; disposable FalkorDB integration is manual opt-in.
-The workflow exists locally; no GitHub execution or passing badge is claimed.
-
-[Final clean-room results](docs/final-validation.md): archived source and a fresh
-Python environment passed **166 tests with 88.97% statement coverage**. All five
-scenario scores reproduced; live provider and manual viewport checks remain pending.
+[Executed validation results](docs/final-validation.md): the latest live suite
+passed **168 tests with 88.97% statement coverage**, and all five scenarios were
+verified. Five real Brave screenshots exist; narrow layout and successful cloud
+generation remain unverified (the Groq attempt failed authentication).
+[Benchmarks](docs/benchmark.md) distinguish native database round-trips from
+cached Python traversal and do not claim a native speedup.
 
 ## Demo scenarios
 
@@ -358,13 +352,12 @@ then compare fictional containment. Do not tour all nine tabs.
 [Three-minute script, pitches, 15 judge answers and failure backups](docs/demo-script.md).
 [Submission-day checklist](docs/submission-checklist.md).
 
-## Screenshots and recording
+## Screenshots
 
-Real captures are pending. Required views: landing, Token Vault, graph, customer
-path, bottlenecks, score breakdown, Cypher receipts, timeline, mitigation comparison,
-deterministic fallback, wide and narrow layouts. Store sanitized captures under
-docs/assets/. Never include keys, private paths or account details. No AI-generated
-image should be presented as an application screenshot.
+Five real desktop captures are linked near the top of this README and stored
+under docs/assets/. [Capture inventory and remaining visual checks](docs/submission-checklist.md#screenshots-and-visual-checks)
+distinguish existing images from pending narrow-layout checks. Never include
+keys, private paths or account details, or present generated images as screenshots.
 
 ## Security and current limitations
 

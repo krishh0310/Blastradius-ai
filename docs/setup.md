@@ -73,3 +73,57 @@ named disposable graphs for importer tests. Do not target valuable/production da
 
 `docker compose down` retains the named volume. Do not add `-v` unless deliberately
 discarding that data. No reset is needed for setup or verification.
+
+## Investigation, reporting and simulation commands
+
+After completing the development setup above:
+
+```zsh
+python -m src.investigator --component "Token Vault" --depth 6 --json
+python -m src.analytics --component "Token Vault" --status failed
+python -m src.reports --component "Token Vault" --status failed --deterministic
+python -m src.simulator --component vault --mitigation "Isolate unhealthy dependency"
+python -m src.simulator --component payment --no-failover --mitigation "Activate regional replica"
+python -m src.simulator --component mumbai --json
+```
+
+An explicit status is hypothetical; omitting it in analytics/reports uses recorded
+health. Simulator CLI uses exact IDs. `--json` produces structured evidence.
+No provider is required for graph queries, analytics or simulation.
+
+In Streamlit, Run Token Vault Demo → View FalkorDB Evidence → Simulate Mitigation
+computes the deterministic result, opens query receipts, then prepares fictional
+containment. The separate simulator supports Build cascade, Play/Pause, Next step,
+Reset simulation and speed controls. Reset discards mitigation and returns to
+frame zero. Changed simulation inputs require rebuilding. Playback advances
+precomputed frames, not real cloud time.
+
+Controls retain the last completed investigation until Investigate/refresh;
+changing controls alone does not change its facts. Snapshots cache for 45 seconds,
+and results retain their originating snapshot/depth/time. Refresh invalidates
+the snapshot/result. Display caps are 180 nodes / 300 edges with a notice; complete
+bounded evidence remains in tables. Shapes, arrows, text labels and dashed optional
+edges supplement color. Empty/single-node/filter-empty states are supported.
+
+## Provider setup
+
+Choose deterministic, gemini, groq or ollama through LLM_PROVIDER. Keep API keys
+only in process environment variables; keys placed in .env are ignored. Nonsecret
+models/URLs/timeouts load from .env or environment; see .env.example and README.
+For cloud reporting, privately export GEMINI_API_KEY or GROQ_API_KEY, select that
+provider, then opt in using the UI checkbox or the reports CLI. Only fictional
+graph evidence is sent; do not store secrets in topology properties.
+
+```zsh
+export LLM_PROVIDER=gemini
+read -rs "GEMINI_API_KEY?Gemini API key: "
+export GEMINI_API_KEY
+python -m src.reports --component "Token Vault" --status failed
+```
+
+For Groq, use LLM_PROVIDER=groq and privately read/export GROQ_API_KEY instead.
+For local reporting, run `ollama pull qwen3:8b`, start `ollama serve`, then select
+LLM_PROVIDER=ollama; OLLAMA_BASE_URL defaults to http://localhost:11434.
+Inspect actual provider/model and grounding warnings: HTTP success alone does
+not establish a validated report. The last Groq attempt failed authentication and
+safely returned deterministic; Gemini/Ollama live success remains unverified.

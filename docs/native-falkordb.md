@@ -70,3 +70,28 @@ python -m src.investigator --component 'Token Vault' --depth 6 --json
 
 Parity covers Token Vault, Orders Database, analytics cycles, optional email API,
 unknown IDs, and depths 1/6/8. The initial schema and scoring weights are unchanged.
+
+## CLI and reusable operations
+
+After [setup](setup.md), run `python -m src.investigator --component 'Token Vault'
+--depth 6` (on one shell line); add `--json` for typed evidence. Exit codes: 0 for a
+completed bounded match, 2 for missing/ambiguous input, 1 for configuration/database/
+validation failure. Inspect warnings even on exit 0. IDs match first, then
+case-insensitive full names; Db/Database aliases are supported. Fuzzy suggestions
+are never silently promoted to matches. Duplicate names require an exact ID.
+
+`NativeGraphQueries(db, QueryLimits(...))` and the controlled snapshot fallback
+return Pydantic models. Their reusable interface includes exact_lookup, search,
+suggestions, direct_dependencies, direct_dependents, dependencies, blast_radius,
+shortest_path, impact_paths, paths, critical_paths, workflows, customers, regions,
+teams, runbooks, deployment, cycles, health and evidence_subgraph.
+`investigate(queries, component)` composes these into InvestigationResult.
+
+Dependency evidence retains original source/target/type and every edge property;
+node_ids describe traversal order, which can oppose stored dependency direction.
+Impact lists deduplicate entities and prefer all-required supporting routes even
+when longer than the shortest route. Path criticality is the weakest edge;
+critical paths require every dependency to be required and meet the threshold.
+Recorded health is never changed by an investigation. Missing results under a cap
+are not proof of no dependency. Snapshot reads are separate queries without
+transactional isolation; intended use is the bounded, quiescent demo graph.

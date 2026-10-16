@@ -1,4 +1,4 @@
-# Phase 8: security and reliability
+# Security and reliability
 
 The application remains a local, single-operator demo, not an authenticated public
 service. Do not expose Streamlit, Redis, or the FalkorDB Browser to the internet.
@@ -80,7 +80,8 @@ No hooks are installed automatically.
 
 The secret scanner reports locations, never values. It checks recognizable key
 formats, currently exported provider keys, and tracked dotenv files. It is not a
-complete secret detector and does not inspect Git history. If Git metadata is
+complete secret detector. Use `python scripts/check_secrets.py --history` to
+add scanning of locally reachable Git commits; the default scans current files. If Git metadata is
 absent, it explicitly reports that committed-secret verification is unavailable.
 Previously exposed credentials must be revoked, not just removed from files.
 
@@ -90,68 +91,43 @@ covered by that scan. Image updates require a new digest and regression tests.
 Cloud availability, real provider credentials, and production security are not
 certified by mocked provider tests. No deployment is included in this phase.
 
-## Verified results — 2026-10-16
+## CI and grounded provider boundary
 
-- Fresh Python 3.12 environment: declared development dependencies installed;
-  `pip check` passed.
-- Full suite with `FALKORDB_INTEGRATION=1`: **129 passed, zero skipped**;
-  **88.37% source statement coverage**. Coverage is not branch-complete.
-- Ruff lint and formatting, compileall, and Bandit passed. The secret-check
-  script has two narrowly documented Bandit suppressions for its constant,
-  shell-free local Git command.
-- `pip-audit` in both existing and fresh environments: no known vulnerabilities.
-- Source secret scan: zero findings; Git tracking/history unavailable because
-  this workspace has no Git metadata.
-- Compose validation passed. After saving and recreating the container, FalkorDB
-  became healthy and retained **54 nodes / 141 relationships**, with zero graph
-  integrity errors. The intentional dependency cycle remains present.
-- Fresh-environment Streamlit started on loopback port 8502; its health endpoint
-  returned HTTP 200 / `ok`. UI behavior was checked by the full AppTest suite;
-  no new manual browser/viewport inspection was performed in this phase.
+The [quality workflow](../.github/workflows/quality.yml) installs development
+requirements on Python 3.12 and checks Ruff, formatting, compileall, pytest with
+80% coverage enforcement, Bandit, current/history secrets and pip consistency.
+Provider keys are not required. Checkout uses read-only contents permissions and
+does not persist credentials. There is no deployment or publication step.
 
-## Files changed
+Disposable integration is a manual workflow_dispatch input: the graph is
+ci_<run_id>_<attempt>, never the development graph; importer tests use their own
+unique graph names. Local tests are not proof of a remote CI run or passing badge.
+For executed outcomes and advisory-scan dates, see [final validation](final-validation.md).
 
-Created:
+Reports validate a graph-generated catalog of facts, entities, numbers, paths,
+severity, actions and unknowns with Pydantic plus exact catalog membership.
+Providers may prioritize known claim IDs/action/question indices for three roles
+and compare supplied fictional mitigation outcomes; they cannot introduce prose
+facts or new numbers. Rejected text is not echoed, and raw incident notes and
+timings never enter provider prompts. No model repair call improvises missing facts.
 
-- `pyproject.toml`
-- `requirements-dev.txt`
-- `.pre-commit-config.yaml`
-- `scripts/check_secrets.py`
-- `tests/conftest.py`
-- `tests/test_hardening.py`
-- `tests/test_smoke.py`
-- `docs/hardening.md`
+Each selected provider gets one bounded attempt; cross-provider fallback requires
+LLM_FALLBACK_ENABLED=true. Otherwise only the active provider is attempted before
+the deterministic template. Requests are limited to 300 KB, responses to 1 MB,
+output to 8,192 tokens, and socket timeout defaults to 20 seconds (at most 120).
+Known keys are checked against outgoing evidence and final reports; this does not
+make arbitrary secrets safe to store in graph descriptions. No provider runs
+queries, tools, shell commands or infrastructure actions.
 
-Modified for hardening, callers, or documentation:
+[Provider setup](setup.md#provider-setup) and [README configuration](../README.md)
+cover Gemini, Groq and Ollama. Groq's documented compatibility URL contains
+/openai/v1 but uses no OpenAI service, SDK, model or key. Protocol references:
+[Gemini](https://ai.google.dev/api/generate-content),
+[Groq](https://console.groq.com/docs/api-reference),
+[Ollama](https://docs.ollama.com/api/chat).
 
-- `.gitignore`
-- `.streamlit/config.toml`
-- `docker-compose.yml`
-- `README.md`
-- `src/config.py`
-- `src/database.py`
-- `src/graph_queries.py`
-- `src/seed.py`
-- `src/topology.py`
-- `src/simulator.py`
-- `src/analytics.py`
-- `tests/test_database.py`
-- `tests/test_topology.py`
+## Verification status
 
-Formatting/import cleanup only:
-
-- `src/dashboard_service.py`
-- `src/dashboard_ui.py`
-- `src/investigator.py`
-- `src/providers.py`
-- `src/reports.py`
-- `src/simulation_ui.py`
-- `src/visualization.py`
-- `tests/test_analytics.py`
-- `tests/test_dashboard.py`
-- `tests/test_investigator.py`
-- `tests/test_reports.py`
-- `tests/test_simulator.py`
-
-The local `.env`, sample topology, and existing volume were preserved. No project
-source files were removed. Test coverage/cache artifacts are Git-ignored.
+[Final validation](final-validation.md) is the canonical dated record for tests,
+coverage, live-provider attempts, screenshots, graph integrity and unverified
+checks. This document states security boundaries, not a production certification.
