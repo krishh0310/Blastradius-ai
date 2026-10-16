@@ -92,3 +92,13 @@ raw samples, medians and nearest-rank p95 recorded. Native blast query median
 3.786 ms; full no-LLM pipeline 32.130 ms. No SQL/user-study/provider comparison
 was invented. Complete nonintegration suite: **140 passed, 20 skipped, 85.14%
 coverage**. Benchmark helper tests, Ruff/format passed. Small warm graph only.
+
+## Phase 9
+
+Phase 8 commit: `e5b439d`. Files: quality.yml, check_secrets.py,
+test_history_scan.py, repository-quality.md, README and ledger. Key-free Python
+3.12 quality CI plus manually triggered disposable-graph integration added.
+Historical scan regression first failed, then passed; safe current/history
+scan reports zero findings. YAML parsed and jobs inspected; Ruff/format/Bandit
+passed. Complete nonintegration suite: **141 passed / 20 skipped, 85.14%
+coverage**. No workflow was pushed or executed on GitHub; no badge claims otherwise.

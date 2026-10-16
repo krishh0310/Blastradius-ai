@@ -315,6 +315,7 @@ ruff format --check .
 python -m compileall -q src tests scripts app.py
 bandit -r src scripts -q
 python scripts/check_secrets.py
+python scripts/check_secrets.py --history
 python -m pip check
 pip-audit --cache-dir .audit-cache --progress-spinner off
 ```
@@ -322,6 +323,10 @@ pip-audit --cache-dir .audit-cache --progress-spinner off
 Coverage is enforced at 80%. Provider calls are mocked. Integration tests require
 the seeded local graph; importer tests create uniquely named disposable graphs.
 [Security boundaries](docs/hardening.md) and [phase baseline](docs/baseline-audit.md).
+
+[CI workflow and manual repository choices](docs/repository-quality.md): quality
+checks run on push/pull request; disposable FalkorDB integration is manual opt-in.
+The workflow exists locally; no GitHub execution or passing badge is claimed.
 
 ## Demo scenarios
 
