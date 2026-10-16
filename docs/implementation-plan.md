@@ -50,3 +50,22 @@ Phase outcomes and commit identifiers are recorded as work progresses.
 
 Completion covers safe local deliverables and the screenshot-checklist alternative.
 Manual assets, provider opt-in and remote CI remain explicitly unverified.
+
+## Approved follow-up: benchmark and reference gaps
+
+User approved this narrow continuation in chat. Base: e4ba035; clean main was
+preserved and the existing improvement branch fast-forwarded to the same commit.
+
+- [ ] Add a failing live benchmark regression, then measure cached Python
+  blast-radius traversal and investigation using existing GraphQueries methods.
+  Keep native timings, report raw samples and exclude snapshot download explicitly.
+- [ ] Review the ten supplied reference projects conceptually, record sources,
+  access/license limitations and independent adaptation decisions. Copy no code/assets.
+- [ ] Add development-history.md linking the detailed phase ledger; update README,
+  benchmark, validation and audit without replacing historical executed results.
+- [ ] Run the full suite, quality checks and a read-only benchmark; review and
+  commit the small follow-up. No providers, UI changes, deployment or publication.
+
+Review focus: cached versus fresh retrieval costs; fair identical depth/limits;
+no fabricated source availability/licenses; unavailable local Docker; historical
+test/score figures clearly distinguished from this follow-up's actual results.

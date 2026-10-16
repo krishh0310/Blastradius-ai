@@ -153,3 +153,17 @@ native query median 3.699 ms, pipeline 33.167 ms; counts unchanged. Earlier raw
 benchmark samples remain labeled separately. README/demo figures refreshed.
 No application source changed since the fully verified clean-room commit.
 Manual screenshots, presentation timing, live providers and remote CI are not claimed.
+
+## Approved follow-up — benchmark
+
+Base e4ba035, clean main; improvement branch fast-forwarded without losing commits.
+Read-only baseline: 146 passed / 20 skipped, 85.59% statement coverage; Ruff,
+format and pip check passed. Added live regression first: failed with missing
+python_blast_radius measurement. Two existing Python operations added; full live
+suite then passed **167 tests, zero skipped, 88.97% coverage** (16.53 seconds).
+Twenty actual timing samples per operation after two warm-ups recorded, including
+Python traversal/investigation. Native query median 3.753 ms; cached Python blast
+radius 0.035 ms; no-LLM pipeline 32.781 ms. No native speedup claim.
+Ruling: retain approved in-place improvement branch rather than create another
+worktree — preserves the requested branch and existing verified environment;
+cost: no additional filesystem isolation from future user edits.

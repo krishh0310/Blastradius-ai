@@ -56,10 +56,12 @@ def run(iterations: int = 20, warmup: int = 2) -> dict:
         operations = {
             "direct_one_hop": lambda: NativeGraphQueries(db).direct_dependents("vault"),
             "native_blast_radius": lambda: NativeGraphQueries(db).blast_radius("vault"),
+            "python_blast_radius": lambda: graph.blast_radius("vault"),
             "native_blast_query": lambda: db.execute_query(
                 downstream["cypher"], downstream["parameters"]
             ),
             "native_investigation": lambda: investigate(NativeGraphQueries(db), "vault"),
+            "python_investigation": lambda: investigate(graph, "vault"),
             "networkx_analytics": lambda: Analytics(graph).analyze(result, "failed"),
             "deterministic_report": lambda: generate_report(evidence, Settings()),
             "pipeline_without_llm": pipeline,
@@ -96,6 +98,7 @@ def run(iterations: int = 20, warmup: int = 2) -> dict:
             "customers": len(result.impacted_customers),
             "measurements": measurements,
             "limits": "Warm local connection; cached global snapshot; no UI rendering/startup/provider time. "
+            "Python timings exclude snapshot retrieval/construction; native timings include database round-trips. "
             "Pipeline includes fresh native queries, NetworkX, fictional comparison construction and report. "
             "Report-only excludes evidence construction. Server nodes examined/expansions are not measured.",
         }

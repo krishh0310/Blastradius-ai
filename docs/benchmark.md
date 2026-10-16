@@ -1,5 +1,301 @@
 # Measured local graph benchmark
 
+## Native versus Python follow-up
+
+Executed 2026-10-16 on the same local Python/macOS environment and fictional
+54-node / 141-relationship graph. Source: e4ba035 plus the small benchmark
+extension (no application-module changes). Twenty iterations, two warm-ups;
+nearest-rank p95. Both engines use the existing default depth six and limits.
+
+| Operation | Median ms | p95 ms |
+|---|---:|---:|
+| direct_one_hop | 1.155 | 1.451 |
+| native_blast_radius | 4.714 | 8.764 |
+| python_blast_radius | 0.035 | 0.044 |
+| native_blast_query | 3.753 | 4.282 |
+| native_investigation | 24.789 | 31.559 |
+| python_investigation | 0.793 | 0.817 |
+| networkx_analytics | 0.950 | 0.986 |
+| deterministic_report | 0.060 | 0.065 |
+| pipeline_without_llm | 32.781 | 41.777 |
+
+Python traversal is faster here because it reads an already downloaded and
+constructed in-memory snapshot. Native measurements include database round-trips
+and driver decoding; native_blast_radius additionally converts typed evidence.
+This is not a fair end-to-end speed contest and does not show a FalkorDB speedup.
+Snapshot download/construction is excluded from Python timings; cached snapshots
+also have different freshness semantics. Existing live parity tests compare the
+returned facts for the seeded fixture; timing alone does not prove parity.
+No SQL implementation, operator study, provider latency or large-graph scaling
+was measured. The graph advantage demonstrated is path retrieval and evidence
+expressiveness at the database boundary, not winning this latency comparison.
+
+Counts: 33 evidence nodes, 35 evidence relationships, 21 unique impact paths,
+maximum seven hops including business/customer context, three direct components,
+fifteen total multi-hop-traversal components (including workflows), six customers.
+
+### Follow-up raw samples
+
+```json
+{
+  "environment": {
+    "python": "3.12.14",
+    "system": "macOS-26.6.2-arm64-arm-64bit",
+    "architecture": "arm64"
+  },
+  "iterations": 20,
+  "warmup": 2,
+  "snapshot_nodes": 54,
+  "snapshot_relationships": 141,
+  "operational_nodes": 29,
+  "operational_adjacencies": 37,
+  "returned_evidence_nodes": 33,
+  "returned_evidence_relationships": 35,
+  "returned_unique_impact_paths": 21,
+  "maximum_hops": 7,
+  "direct_components": 3,
+  "multi_hop_components": 15,
+  "customers": 6,
+  "measurements": {
+    "direct_one_hop": {
+      "median_ms": 1.155,
+      "p95_ms": 1.451,
+      "samples_ms": [
+        1.141,
+        1.434,
+        1.451,
+        1.195,
+        0.948,
+        0.986,
+        1.161,
+        1.337,
+        0.992,
+        1.001,
+        1.038,
+        1.033,
+        1.15,
+        1.482,
+        1.335,
+        1.174,
+        1.123,
+        1.223,
+        1.211,
+        1.07
+      ]
+    },
+    "native_blast_radius": {
+      "median_ms": 4.714,
+      "p95_ms": 8.764,
+      "samples_ms": [
+        5.669,
+        8.764,
+        6.167,
+        5.465,
+        5.554,
+        4.881,
+        4.659,
+        4.66,
+        4.804,
+        16.25,
+        5.533,
+        4.653,
+        4.46,
+        4.367,
+        4.768,
+        4.304,
+        4.306,
+        4.172,
+        4.33,
+        4.314
+      ]
+    },
+    "python_blast_radius": {
+      "median_ms": 0.035,
+      "p95_ms": 0.044,
+      "samples_ms": [
+        0.042,
+        0.038,
+        0.048,
+        0.044,
+        0.043,
+        0.044,
+        0.032,
+        0.032,
+        0.033,
+        0.036,
+        0.035,
+        0.035,
+        0.036,
+        0.036,
+        0.035,
+        0.035,
+        0.036,
+        0.032,
+        0.032,
+        0.032
+      ]
+    },
+    "native_blast_query": {
+      "median_ms": 3.753,
+      "p95_ms": 4.282,
+      "samples_ms": [
+        3.797,
+        3.961,
+        3.787,
+        3.578,
+        3.546,
+        3.825,
+        3.649,
+        4.651,
+        3.901,
+        3.941,
+        3.768,
+        3.667,
+        3.539,
+        3.614,
+        3.576,
+        3.728,
+        3.738,
+        4.282,
+        3.894,
+        3.712
+      ]
+    },
+    "native_investigation": {
+      "median_ms": 24.789,
+      "p95_ms": 31.559,
+      "samples_ms": [
+        23.708,
+        25.348,
+        23.556,
+        31.559,
+        23.925,
+        23.143,
+        27.083,
+        25.347,
+        26.218,
+        24.825,
+        24.604,
+        25.445,
+        24.753,
+        24.711,
+        33.279,
+        25.42,
+        25.763,
+        24.004,
+        24.338,
+        24.497
+      ]
+    },
+    "python_investigation": {
+      "median_ms": 0.793,
+      "p95_ms": 0.817,
+      "samples_ms": [
+        0.824,
+        0.817,
+        0.788,
+        0.802,
+        0.793,
+        0.811,
+        0.802,
+        0.791,
+        0.816,
+        0.809,
+        0.796,
+        0.801,
+        0.789,
+        0.792,
+        0.793,
+        0.776,
+        0.781,
+        0.79,
+        0.782,
+        0.784
+      ]
+    },
+    "networkx_analytics": {
+      "median_ms": 0.95,
+      "p95_ms": 0.986,
+      "samples_ms": [
+        0.986,
+        0.959,
+        0.964,
+        0.961,
+        1.116,
+        0.969,
+        0.962,
+        0.967,
+        0.905,
+        0.904,
+        0.929,
+        0.935,
+        0.951,
+        0.937,
+        0.938,
+        0.932,
+        0.948,
+        0.939,
+        0.959,
+        0.929
+      ]
+    },
+    "deterministic_report": {
+      "median_ms": 0.06,
+      "p95_ms": 0.065,
+      "samples_ms": [
+        0.06,
+        0.065,
+        0.061,
+        0.07,
+        0.065,
+        0.06,
+        0.059,
+        0.055,
+        0.06,
+        0.061,
+        0.065,
+        0.063,
+        0.061,
+        0.06,
+        0.055,
+        0.054,
+        0.058,
+        0.06,
+        0.06,
+        0.06
+      ]
+    },
+    "pipeline_without_llm": {
+      "median_ms": 32.781,
+      "p95_ms": 41.777,
+      "samples_ms": [
+        31.975,
+        39.787,
+        31.974,
+        32.339,
+        32.313,
+        32.436,
+        34.139,
+        41.777,
+        33.085,
+        32.665,
+        32.521,
+        32.443,
+        33.612,
+        34.606,
+        42.488,
+        32.422,
+        32.218,
+        32.898,
+        32.978,
+        36.652
+      ]
+    }
+  },
+  "limits": "Warm local connection; cached global snapshot; no UI rendering/startup/provider time. Python timings exclude snapshot retrieval/construction; native timings include database round-trips. Pipeline includes fresh native queries, NetworkX, fictional comparison construction and report. Report-only excludes evidence construction. Server nodes examined/expansions are not measured."
+}
+```
+
 ## Final reviewed-source repeat
 
 Repeated on 2026-10-16 using archived application commit `e3096d5` and the fresh
