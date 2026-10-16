@@ -132,3 +132,14 @@ the archive and returned HTTP 200. Actual missing-key CLI fallback passed.
 Maximum-depth assertion and fictional mitigation/failover comparisons passed.
 Development graph fingerprint unchanged. Detailed commands and honest unverified
 items are in final-validation.md; no cloud call, public CI run or manual screenshot.
+
+## Phase 11
+
+Phase 10 commit: `ac8ae6d`. Files: demo-script.md, submission-checklist.md,
+README and ledger. Target three-minute flow, 30-second/one-minute pitches,
+five-minute extension, fifteen accurate judge answers, failure backups and
+forbidden claims added. Values use executed validation, not invented outcomes.
+The opening explicitly corrects the all-healthy-topology assumption: recorded
+Orders Database is degraded; the simulator's baseline is fictional healthy.
+Local document links checked. Actual presenter timing/recording, screenshots,
+team details, provider opt-in and publication remain owner actions.

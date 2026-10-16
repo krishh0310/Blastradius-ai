@@ -345,6 +345,9 @@ scenario scores reproduced; live provider and manual viewport checks remain pend
 Start with Token Vault, show one customer path and its Cypher, replay the cascade,
 then compare fictional containment. Do not tour all nine tabs.
 
+[Three-minute script, pitches, 15 judge answers and failure backups](docs/demo-script.md).
+[Submission-day checklist](docs/submission-checklist.md).
+
 ## Screenshots and recording
 
 Real captures are pending. Required views: landing, Token Vault, graph, customer
