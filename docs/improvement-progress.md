@@ -119,3 +119,16 @@ One attempted live run had 20 connection failures because Docker Desktop had
 stopped; daemon/socket inspection established the cause. Starting Docker and
 the existing Compose service restored health; no development graph reset.
 Remaining limitation: observed-drift checks are not transactional isolation.
+
+## Phase 10
+
+Reviewed-fix commit: `e3096d5`. Files: final-validation.md, README and ledger.
+Archive of that commit plus a fully fresh second virtual environment passed
+**166 tests, zero skipped, 88.97% coverage**. Separate unused graph seeded twice
+with identical 54/141 totals and zero integrity errors. All quality/security
+commands passed; no known Python advisories, no current/history secret findings.
+All five native/deterministic scenarios matched baseline. Streamlit launched from
+the archive and returned HTTP 200. Actual missing-key CLI fallback passed.
+Maximum-depth assertion and fictional mitigation/failover comparisons passed.
+Development graph fingerprint unchanged. Detailed commands and honest unverified
+items are in final-validation.md; no cloud call, public CI run or manual screenshot.

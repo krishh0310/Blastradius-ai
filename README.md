@@ -245,7 +245,7 @@ python -m streamlit run app.py
 ```
 
 Compose pins the FalkorDB image, binds ports 6379/3000 to loopback, uses a named
-persistent volume, restart policy and health check. Docker Browser is optional.
+persistent volume, restart policy and health check. FalkorDB Browser is optional.
 Stop with `docker compose down`; do not add `-v` to retain data. Redis snapshots
 are not a production backup. No reset is needed. Explicit reset requires the
 configured graph name and deletes Component data; avoid it for normal use.
@@ -327,6 +327,10 @@ the seeded local graph; importer tests create uniquely named disposable graphs.
 [CI workflow and manual repository choices](docs/repository-quality.md): quality
 checks run on push/pull request; disposable FalkorDB integration is manual opt-in.
 The workflow exists locally; no GitHub execution or passing badge is claimed.
+
+[Final clean-room results](docs/final-validation.md): archived source and a fresh
+Python environment passed **166 tests with 88.97% statement coverage**. All five
+scenario scores reproduced; live provider and manual viewport checks remain pending.
 
 ## Demo scenarios
 
