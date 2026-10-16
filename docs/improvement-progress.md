@@ -61,3 +61,13 @@ existing dotenv configuration and seeds before validating an empty graph.
 Machine-specific paths removed from the edited guides; troubleshooting added.
 A fresh temporary virtual environment installed declared dependencies, passed
 pip check and **137 tests / 20 skips, 85.08% coverage**. No provider calls.
+
+## Phase 6
+
+Phase 5 commit: `ce37a95`. File: README.md and this ledger. Product-first README
+now documents all requested architecture/schema/algorithm/setup/provider/security/
+demo/license sections, with truthful capture/team/video placeholders. All cloud
+and customer data is explicitly fictional. Native versus global snapshot roles,
+limits, region-envelope semantics and constrained AI value are explicit.
+Local README links resolve; Ruff and formatting pass. Setup was exercised in
+Phase 5. No screenshot, cloud-provider or production claim is fabricated.
