@@ -35,7 +35,7 @@ def evidence_summary(result: InvestigationResult) -> dict:
     }
 
 
-def render_evidence(result: InvestigationResult) -> None:
+def render_evidence(result: InvestigationResult, *, expand_receipts: bool = False) -> None:
     """Keep graph value visible without touring the detailed tabs."""
     summary = evidence_summary(result)
     st.subheader("FalkorDB Evidence")
@@ -87,7 +87,7 @@ def render_evidence(result: InvestigationResult) -> None:
         "A relational design would require recursive joins across infrastructure, ownership, "
         "workflow and customer associations. SQL can do this; graph traversal makes the changing relationships more direct."
     )
-    with st.expander("Executed Cypher and safe query receipts", expanded=False):
+    with st.expander("Executed Cypher and safe query receipts", expanded=expand_receipts):
         if not result.query_diagnostics:
             st.info(
                 "No native query receipts support this result. It uses the labeled Python snapshot."

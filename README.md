@@ -1,65 +1,68 @@
 # BlastRadius AI
 
-One failure. Every hidden dependency. Full impact in seconds.
+Trace a fictional cloud outage from a shared dependency to the customers it can affect.
 
-An explainable, graph-grounded incident investigation and fictional cascade
-rehearsal for **Graph Hacks · Connected Data · WeMakeDevs and FalkorDB**.
-“Full impact” means the evidence returned within explicit depth/result limits,
-not a guarantee of complete real-world knowledge.
+## Problem and solution
 
-> BlastRadius AI is a local hackathon demonstration using fictional infrastructure,
-> incidents, organizations and customers. It does not connect to live cloud
-> systems, confirm causation, or execute real remediation.
->
-> All demo timings, failure transitions and mitigation outcomes are fictional
-> simulation assumptions. Benchmarks, when reported, measure the local software.
+A failed dependency can disrupt services and customer workflows several hops away.
+BlastRadius AI investigates those relationships in FalkorDB, returns exact paths,
+and presents an explainable heuristic exposure score and graph-grounded briefing.
+Its simulated cascade compares fictional containment outcomes without infrastructure actions.
 
-**Dashboard screenshot:** pending real capture; no fabricated screenshot is used.  
-**Demo video/GIF:** [team to add a real recording URL before submission].
+**Why FalkorDB:** bounded, parameterized Cypher retrieves changing dependency,
+workflow, customer, owner, runbook and replica paths directly from the graph.
+NetworkX computes structural metrics from a bounded snapshot. SQL could express
+recursive analysis too; the advantage here is relationship/path clarity, not a
+claim that a relational database cannot do it.
 
-[Capture checklist and filenames](docs/screenshots.md). Use Run Demo, View
-FalkorDB Evidence, and Simulate Mitigation for the short judge-facing flow.
+## Try the online demo in three clicks
 
-## The problem
+1. **Run Token Vault Demo** — compute Critical severity, the risk score, potentially
+   affected services/customers and maximum evidence hop depth.
+2. **View FalkorDB Evidence** — open safe executed Cypher receipts, timings, limits
+   and a service → workflow → customer path with supporting edge details.
+3. **Simulate Mitigation** — build the fictional cascade and containment comparison
+   using the existing simulator. Reset/replay controls remain available.
 
-A shared dependency can disrupt services, business workflows and customers several
-hops away. During an outage, an inventory tells an operator what exists, but not
-the complete chain connecting a failed dependency to a customer-facing symptom.
+The Token Vault demo always uses deterministic reporting; no API key is required.
+Optional Gemini, Groq and Ollama briefings do not determine infrastructure facts.
 
-BlastRadius AI follows those relationships, preserves the supporting paths,
-ranks candidate causes and explains a deterministic exposure score. Operators
-can rehearse a cascade and compare fictional containment options without touching
-real infrastructure.
-
-## Why FalkorDB, rather than a flat lookup?
-
-FalkorDB is the runtime source of infrastructure facts and executes bounded
-incident-specific Cypher traversal. It retrieves upstream/downstream paths,
-workflow/customer chains, ownership, runbooks, deployments and replica evidence.
-The interface shows the actual query templates, safe parameters and timings.
-
-A relational database could implement this with recursive queries and joins.
-A graph makes changing, mixed-type, cyclic relationships and path reconstruction
-more direct. We do not claim SQL is incapable or faster/slower without measuring it.
-
-NetworkX remains responsible for global centrality and structural algorithms.
-A bounded global snapshot supports those calculations; it is not presented as
-native database reasoning. Database failures can use a clearly labeled Python
-snapshot fallback. See [native query semantics and limits](docs/native-falkordb.md).
-
-## Three-command quick start
+## Start locally
 
 From the repository root, with Python 3.12 and Docker Desktop running:
 
 ```zsh
-python3.12 -m venv .venv && source .venv/bin/activate
+python3.12 -m venv .venv
+source .venv/bin/activate
 python -m pip install -r requirements-dev.txt
-docker compose up -d --wait && python -m src.seed && python -m streamlit run app.py
+test -e .env || cp .env.example .env
+docker compose up -d --wait
+python -m src.health
+python -m src.seed
+python -m src.seed --validate
+python -m streamlit run app.py
 ```
 
-Open http://127.0.0.1:8501. Defaults use deterministic reports; no API key is needed.
-Normal seeding merges the fictional fixture without a reset. Use a dedicated
-demo graph, not valuable data.
+Open http://127.0.0.1:8501. Normal seeding merges the fictional fixture without
+resetting the graph; use a dedicated demo graph, not valuable data.
+[Complete macOS setup and troubleshooting](docs/setup.md).
+
+> BlastRadius AI is a local hackathon demonstration using fictional infrastructure, incidents, organizations and customers. It does not connect to live cloud systems, confirm causation, or execute real remediation.
+
+Simulation timestamps and recovery assumptions are fictional; software benchmarks
+measure local execution only. Risk is heuristic, causes are candidates, and a
+declared replica does not prove failover readiness.
+
+![Real Token Vault dashboard: Critical heuristic exposure, 11 services and six customers](docs/assets/token-vault-investigation.png)
+
+Real Brave captures: [overview](docs/assets/dashboard-overview.png),
+[native query receipts](docs/assets/falkordb-evidence.png),
+[customer path](docs/assets/customer-evidence.png), and
+[fictional cascade](docs/assets/cascade-simulation.png).
+[Capture status and remaining narrow-layout checks](docs/screenshots.md).
+
+Built for **Graph Hacks · Connected Data · WeMakeDevs and FalkorDB**.
+[Native query semantics, fallback and limits](docs/native-falkordb.md).
 
 ## Major features
 
@@ -324,7 +327,7 @@ Coverage is enforced at 80%. Provider calls are mocked. Integration tests requir
 the seeded local graph; importer tests create uniquely named disposable graphs.
 [Security boundaries](docs/hardening.md) and [phase baseline](docs/baseline-audit.md).
 
-[Final submission audit: 89/100 internal assessment](docs/final-audit.md).
+[Latest technical audit: 90/100 internal assessment](docs/final-audit.md).
 
 [Development history](docs/development-history.md) and
 [conceptual reference review](docs/reference-review.md) keep phase records and

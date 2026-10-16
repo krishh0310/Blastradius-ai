@@ -242,13 +242,24 @@ def render_simulator(topology_json: str) -> None:
         automatic_failover=automatic,
         depth=depth,
     )
-    if st.button("Build cascade", key="sim_build", type="primary"):
+    preview_requested = st.session_state.pop("sim_preview_requested", False)
+    if st.button("Build cascade", key="sim_build", type="primary") or preview_requested:
         try:
             with st.spinner("Build deterministic timeline and risk frames…"):
                 run = simulation_plan(topology_json, config.model_dump_json())
             reset_playback()
             st.session_state["sim_run"] = run
             st.session_state["sim_snapshot"] = topology_json
+            if preview_requested:
+                action = "Isolate unhealthy dependency"
+                reason = mitigation_eligibility(topology_json, config.model_dump_json())[action]
+                if reason is None:
+                    st.session_state["sim_mitigation"] = mitigation_plan(
+                        topology_json, config.model_dump_json(), run.model_dump_json(), action
+                    )
+                    st.session_state["sim_cursor"] = len(run.frames)
+                else:
+                    st.info("Fictional containment is unavailable: " + reason)
         except Exception:
             st.error(
                 "Simulation could not be built. Check graph integrity and the selected component."

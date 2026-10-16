@@ -184,3 +184,15 @@ integrity 54/141 with zero errors and expected cycle. No advisory audit repeated
 Fresh read-only final review: no Critical or Important findings. The sole minor
 was unchecked follow-up plan boxes, now marked after verification. No deferred
 minors. Keeping the improvement branch as-is; main, remotes and publication unchanged.
+
+## Technical online-demo pass
+
+Baseline b5073a2, clean improvement branch. Preserved all backend modules and
+formula. Fixed shortcut orchestration so click three prepares the existing
+fictional containment result; real evidence button opens receipts on click two.
+Regressions reproduced missing simulation/button failures, then passed. Full live
+suite 168 passed / zero skipped / 88.97% coverage. Real Brave desktop three-click
+inspection and five unaltered screenshots completed after owner granted access.
+One authorized Groq attempt failed authentication and returned deterministic;
+no retries, credentials or raw provider response disclosed. Latest details in
+final-validation.md; no pitch material, deployment or publication added.

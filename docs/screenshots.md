@@ -1,9 +1,17 @@
 # Real screenshot / visual verification checklist
 
-No screenshots were fabricated or generated. The available computer-use inventory
-reported no enabled browser automation surfaces during this pass; no manual
-browser/viewport verification is claimed. Streamlit AppTest checks behavior, not
-pixel appearance. Capture these views manually before submission.
+Five real screenshots were captured from the running local application in Brave
+on 2026-10-16 after the owner temporarily granted native browser access. They are
+unaltered captures, not generated mockups: dashboard-overview.png,
+token-vault-investigation.png, falkordb-evidence.png, customer-evidence.png and
+cascade-simulation.png in assets/. Each was visually inspected for credentials;
+only the fictional demo and local browser chrome are visible.
+
+The actual three-click flow was exercised: Run Token Vault Demo, View FalkorDB
+Evidence, Simulate Mitigation. Critical 91.62, six customers, a three-hop customer
+path, native receipts and 42.62 after mitigation were observed. Desktop capture
+does not establish narrow/mobile layout correctness; those checks remain pending.
+The table below remains a checklist for additional views, not a claim all exist.
 
 Use the real application at 127.0.0.1:8501. Keep **Use configured LLM** off for
 the offline demo; hide terminal, account panels, local paths and secret inputs.

@@ -107,17 +107,27 @@ def reset_session() -> None:
 def run_demo() -> None:
     """One-click deterministic rehearsal; never enables external providers."""
     st.session_state.update(
-        scenario="Token Vault timeout", depth=6, use_provider=False, run_demo_requested=True
+        scenario="Token Vault timeout",
+        depth=6,
+        use_provider=False,
+        run_demo_requested=True,
+        result_show_receipts=False,
     )
     apply_scenario()
 
 
 def open_mitigation() -> None:
-    """Navigate only; the separate simulator still requires explicit controls."""
+    """Request a fictional comparison; the simulator owns all graph logic."""
     st.session_state.update(
         workspace="Cascade simulation",
         sim_component=st.session_state.get("component", "vault"),
         sim_playing=False,
+        sim_preview_requested=True,
+        sim_status="down",
+        sim_optional="degrade",
+        sim_auto=True,
+        sim_depth=8,
+        sim_action="Isolate unhealthy dependency",
     )
 
 
@@ -810,12 +820,18 @@ def main() -> None:
     st.sidebar.button("Reset", on_click=reset_session, width="stretch", key="reset")
     st.sidebar.caption("Reset clears this workspace, not the database.")
     demo, evidence, simulate = st.columns(3)
-    demo.button("Run Demo", key="run_demo", on_click=run_demo, width="stretch")
-    evidence.markdown("[View FalkorDB Evidence](#falkordb-evidence)")
+    demo.button("Run Token Vault Demo", key="run_demo", on_click=run_demo, width="stretch")
+    evidence.button(
+        "View FalkorDB Evidence",
+        key="view_evidence",
+        width="stretch",
+        on_click=lambda: st.session_state.update(result_show_receipts=True),
+    )
     simulate.button(
         "Simulate Mitigation", key="open_mitigation", on_click=open_mitigation, width="stretch"
     )
     submitted = submitted or st.session_state.pop("run_demo_requested", False)
+    st.caption("Token Vault demo reporting: deterministic; no API key or cloud call required.")
     origin = (settings.falkordb_host, settings.falkordb_port, settings.falkordb_graph)
     if st.session_state.get("result_origin") not in (None, origin):
         st.session_state.pop("result_bundle", None)
@@ -905,9 +921,14 @@ def main() -> None:
         )
     st.subheader(bundle.investigation.matched_component.name)
     metric_cards(bundle)
+    if bundle.report:
+        st.caption(f"Report provider: {bundle.report.provider} · model: {bundle.report.model}")
     from src.evidence_ui import render_evidence
 
-    render_evidence(bundle.investigation)
+    render_evidence(
+        bundle.investigation,
+        expand_receipts=st.session_state.get("result_show_receipts", False),
+    )
     tabs = st.tabs(TABS)
     with tabs[0]:
         executive(bundle)

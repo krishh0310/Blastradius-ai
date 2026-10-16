@@ -1,5 +1,22 @@
 # Final submission audit
 
+## Latest technical / online-demo assessment: 90 / 100
+
+Baseline b5073a2, 2026-10-16. Product behavior preserved except the requested
+three-click UI orchestration and explicit evidence button. Real Brave desktop
+inspection/screenshots and the live three-click regression now justify UI 9/10
+instead of 8/10; no other category is inflated. Breakdown: problem 9/10; graph
+necessity 14/15; FalkorDB 14/15; multi-hop 10/10; algorithms 9/10; AI grounding
+8/10; implementation 9/10; UI/online demo 9/10; reliability 4/5; innovation 4/5.
+The full live suite passed 168 tests, zero skipped, 88.97% statement coverage.
+
+Exactly one real Groq attempt failed authentication and safely fell back to a
+deterministic report; this is not provider success. Gemini/Ollama generation,
+remote CI, narrow layout and production/container OS security remain unverified.
+The demo has genuine desktop visual proof and a tested three-action path, but
+the score is internal, not official judging. No pitch/video/interview is required
+for this technical pass. The earlier 89/100 assessment below is historical.
+
 ## Approved follow-up verification
 
 The narrow follow-up from e4ba035 adds benchmark instrumentation/tests and docs,

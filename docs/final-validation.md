@@ -1,5 +1,66 @@
 # Final clean-room validation
 
+## Latest technical / online-demo verification
+
+2026-10-16, baseline b5073a2; existing environment (not a new clean-room install).
+Only UI orchestration, README, screenshot/validation/audit records and UI tests
+changed. Risk formula, native retrieval, topology and provider adapters unchanged.
+
+- Full live suite: **168 passed, zero skipped; 88.97% statement coverage**, 18.57 s.
+- Parallel-edge policy tests and native/reference parity (depths 1/6/8) passed.
+- Three-click regression first failed on missing prepared simulation, then passed;
+  evidence-button regression first failed on missing button, then passed. The live
+  UI test asserts native engine/receipts, deterministic reporting and mitigation.
+- Ruff, format, compileall, Bandit, pip check, secret scan, Compose configuration,
+  FalkorDB health, idempotent seed and graph validation passed: 54 nodes / 141
+  relationships, zero errors, expected Analytics–Notification cycle.
+- Streamlit launched on loopback port 8517. Real Brave interaction confirmed
+  Run Token Vault Demo → View FalkorDB Evidence → Simulate Mitigation. Observed
+  Critical 91.62, eleven downstream services, six customers, maximum seven evidence
+  hops, FalkorDB Cypher, and fictional containment 42.62 / eighteen paths removed.
+- Five genuine desktop screenshots saved under docs/assets/ and linked in README.
+  Narrow/mobile layout was not inspected; no screenshot fabrication or editing.
+- Exactly one authorized Groq attempt used the configured model/key with provider
+  switching disabled. Result: **authentication failure**, safely categorized;
+  actual report provider deterministic, template-v1, three validated role briefings.
+  No key or raw provider body was logged/stored. No live AI success is claimed.
+  Gemini has no configured key; Ollama was not started or called.
+- CI workflow inspected: Python 3.12, development install, Ruff/format, compileall,
+  pytest/coverage, Bandit, secret scan and pip check; no keys required. No remote run.
+
+All five scenarios were also executed against the live graph in deterministic
+mode: Token Vault 91.62 Critical / six customers; Orders Database 56.08 High /
+four; Mumbai 91.62 Critical component envelope / six; external payment API 67.50
+High / six; optional analytics 27.23 Medium / one. Four component scenarios used
+FalkorDB Cypher; Mumbai retained its explicitly labeled bounded Python regional
+composition. Token Vault receipts include downstream/upstream, workflow/customer,
+owned_by, has_runbook, deployed_in, deployment_replicas and cycle operations;
+shortest/critical paths select from their native returned path evidence.
+Streamlit health endpoint returned HTTP 200 / ok.
+
+Commands: development dependencies were already installed. From an activated
+environment, reproduce without any provider calls:
+
+```zsh
+python -m pip install -r requirements-dev.txt
+docker compose config --quiet
+docker compose up -d --wait
+python -m src.health
+python -m src.seed
+python -m src.seed --validate
+env -u GEMINI_API_KEY -u GROQ_API_KEY FALKORDB_INTEGRATION=1 LLM_PROVIDER=deterministic python -m pytest -q
+ruff check .
+ruff format --check .
+python -m compileall -q src tests scripts app.py
+bandit -r src scripts -q
+python -m pip check
+python scripts/check_secrets.py --history
+LLM_PROVIDER=deterministic python -m streamlit run app.py --server.port 8517
+```
+
+No pitch, video, interviews, deployment or publishing were added. Older validation
+sections below are historical records; they do not override this latest status.
+
 ## Approved follow-up (existing environment, not another clean-room install)
 
 Started from clean main at e4ba035. The existing improvement branch was safely
