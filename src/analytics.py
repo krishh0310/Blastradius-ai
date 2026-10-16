@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 from src.config import Settings
 from src.database import DatabaseError, DatabaseManager
-from src.graph_queries import Cycle, EvidencePath, GraphQueries, Impact
+from src.graph_queries import Cycle, EvidencePath, GraphQueries, Impact, evidence_edge_priority
 from src.investigator import InvestigationResult, investigate
 from src.topology import OWNED_LABELS, Node, Relationship
 
@@ -126,7 +126,8 @@ class Analytics:
         if len(ids) - 1 > self.queries.limits.depth:
             return None
         edges = [
-            next(e for e in self.queries.forward[a] if e.target == b) for a, b in zip(ids, ids[1:])
+            min((e for e in self.queries.forward[a] if e.target == b), key=evidence_edge_priority)
+            for a, b in zip(ids, ids[1:])
         ]
         return EvidencePath(
             node_ids=ids,

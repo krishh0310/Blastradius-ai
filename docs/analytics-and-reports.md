@@ -32,6 +32,12 @@ deployment, replication, and business workflow edges do not distort centrality.
 Parallel relationships collapse to one directed adjacency for metrics; original
 edge types and directions remain in evidence paths.
 
+For a fixed node pair, evidence prefers required over optional, then higher
+criticality, then explicitly unhealthy status (down/failed, unhealthy, degraded),
+then lexicographic relationship type/source/target. All original parallel edges
+remain available for exhaustive paths. This policy is shared by shortest-path
+evidence, traversal adjacency and simulation scheduling; no scoring weights change.
+
 - Degree centrality uses NetworkX's directed degree normalization (total degree
   divided by N−1); in-degree counts consumers, out-degree counts providers.
 - Directed betweenness is unweighted and normalized. PageRank uses damping 0.85,

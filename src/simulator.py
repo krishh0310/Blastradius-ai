@@ -10,7 +10,14 @@ from pydantic import BaseModel, Field
 from src.analytics import Analytics, RiskScore
 from src.config import Settings
 from src.database import DatabaseError, DatabaseManager
-from src.graph_queries import EvidencePath, GraphQueries, Impact, QueryLimits, edge_key
+from src.graph_queries import (
+    EvidencePath,
+    GraphQueries,
+    Impact,
+    QueryLimits,
+    edge_key,
+    evidence_edge_priority,
+)
 from src.investigator import InvestigationResult, investigate
 from src.topology import DEPENDENCIES, OWNED_LABELS, Relationship, Topology
 
@@ -153,7 +160,7 @@ class Simulator:
                 continue
             self.links.setdefault(provider, []).append((consumer, edge))
         for adjacent in self.links.values():
-            adjacent.sort(key=lambda item: (item[0], edge_key(item[1])))
+            adjacent.sort(key=lambda item: (item[0], evidence_edge_priority(item[1])))
 
     def alternate(self, node_id: str, statuses: dict[str, Status]) -> Relationship | None:
         """Return only graph-declared, currently and originally healthy alternatives."""

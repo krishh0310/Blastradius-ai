@@ -68,6 +68,19 @@ def edge_key(edge: Relationship) -> tuple[str, str, str]:
     return edge.source, edge.type, edge.target
 
 
+def evidence_edge_priority(edge: Relationship) -> tuple:
+    """Required, critical, unhealthy edges first; identity resolves remaining ties."""
+    health = {"down": 3, "failed": 3, "unhealthy": 2, "degraded": 1}
+    return (
+        not edge.required,
+        -edge.criticality,
+        -health.get(edge.status, 0),
+        edge.type,
+        edge.source,
+        edge.target,
+    )
+
+
 class GraphQueries:
     """One bounded snapshot; no file data or inferred infrastructure facts."""
 
@@ -91,6 +104,10 @@ class GraphQueries:
             if edge.type in DEPENDENCIES:
                 self.forward[edge.source].append(edge)
                 self.reverse[edge.target].append(edge)
+        for adjacent in self.forward.values():
+            adjacent.sort(key=lambda e: (e.target, evidence_edge_priority(e)))
+        for adjacent in self.reverse.values():
+            adjacent.sort(key=lambda e: (e.source, evidence_edge_priority(e)))
 
     @classmethod
     def from_database(
@@ -324,7 +341,8 @@ class GraphQueries:
                 continue
             adjacent = self.reverse[current] if downstream else self.forward[current]
             for edge in sorted(
-                adjacent, key=lambda e: (e.source if downstream else e.target, edge_key(e))
+                adjacent,
+                key=lambda e: (e.source if downstream else e.target, evidence_edge_priority(e)),
             ):
                 expansions += 1
                 if expansions > self.limits.max_expansions:
