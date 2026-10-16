@@ -39,3 +39,15 @@ Evidence selection/empty/partial regressions first failed, then passed.
 Complete nonintegration suite: **132 passed, 20 skipped**, **84.75% coverage**;
 Ruff/format passed. Live parity was verified in Phase 2; UI still needs fresh
 manual viewport review. No claim of server nodes examined is made.
+
+## Phase 4
+
+Phase 3 commit: `7f5ac05`. Files: briefings.py, reports.py, dashboard_ui.py,
+test_briefings.py, analytics-and-reports.md. Role-specific narratives select known
+claim IDs; providers prioritize approved actions/questions and supplied fictional
+mitigation outcomes. Main factual grounding is unchanged; free-form unsupported
+numbers/entities cannot enter through the new schema. Five new regressions
+passed after first demonstrating missing functionality. Entire nonintegration
+suite: **137 passed, 20 skipped; 85.08% coverage**, Ruff/format pass.
+No real provider call made. Narrative wording remains catalog-derived by design;
+provider value is role selection/prioritization, not unconstrained prose.

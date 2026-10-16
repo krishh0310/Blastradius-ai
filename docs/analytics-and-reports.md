@@ -1,5 +1,33 @@
 # Phases 4 and 5: analytics and grounded reports
 
+## Graph-grounded incident briefings
+
+Providers now select evidence IDs for three audiences: incident commander,
+service owner and business stakeholder. They can prioritize known claims,
+approved action indices and validation questions, and compare two supplied
+fictional mitigation outcomes. The UI reconstructs each concise narrative from
+validated statements and displays claim/path IDs. Main factual report fields
+remain exact-catalog validated. This is deliberate constrained editing, not
+unrestricted prose generation or autonomous diagnosis.
+
+Mitigation scores come from the deterministic simulator, explicitly assuming a
+fictional healthy starting baseline. They are not measured recovery predictions.
+Unknown entities, references, numerical indices and missing audiences cause safe
+fallback. Arbitrary additional text/numbers are rejected by the response schema.
+All provider tests are mocked. No external request is made by validation scripts.
+
+Manual opt-in cloud verification, only if you authorize sending fictional graph
+evidence to Groq and using your configured quota:
+
+```zsh
+# Export GROQ_API_KEY privately; never paste it into a tracked file.
+LLM_PROVIDER=groq python -m src.reports --component 'Token Vault' --status failed --json
+```
+
+Check the returned `provider` and `grounding_warnings`: successful HTTP alone is
+not verified grounded-provider success. A deterministic provider value means the
+cloud output did not pass the complete validation boundary.
+
 FalkorDB remains authoritative. Analytics reads Phase 3's bounded database snapshot;
 NetworkX computes operational dependency metrics. Reports never execute graph
 queries, tools, shell commands, or remediation actions.

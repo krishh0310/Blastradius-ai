@@ -5,9 +5,10 @@ import hashlib
 import json
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.analytics import Analytics, ComponentAnalysis, Severity
+from src.briefings import RoleBriefing, briefing_choices, validate_briefings
 from src.config import LLMProvider, Settings
 from src.database import DatabaseError, DatabaseManager
 from src.graph_queries import EvidencePath, GraphQueries, edge_key
@@ -37,6 +38,7 @@ class ReportContent(BaseModel):
     validation_steps: list[str]
     longer_term_recommendations: list[str]
     unknowns: list[str]
+    briefings: list[RoleBriefing] = Field(default_factory=list)
 
 
 class IncidentReport(ReportContent):
@@ -44,6 +46,7 @@ class IncidentReport(ReportContent):
     model: str
     grounding_warnings: list[str]
     evidence_paths: dict[str, EvidencePath]
+    briefing_choices: dict = Field(default_factory=dict)
 
 
 class EvidencePackage(BaseModel):
@@ -56,6 +59,7 @@ class EvidencePackage(BaseModel):
     edges: list[Relationship]
     paths: dict[str, EvidencePath]
     catalog: ReportContent
+    briefing_choices: dict = Field(default_factory=dict)
 
 
 def path_id(path: EvidencePath) -> str:
@@ -198,6 +202,7 @@ def build_evidence(
                 ):
                     edges[edge_key(edge)] = edge
     ids.update(n for e in edges.values() for n in (e.source, e.target))
+    template.briefings, choices = briefing_choices(queries, result, template)
     return EvidencePackage(
         matched_component=root,
         investigation=sanitized,
@@ -206,6 +211,7 @@ def build_evidence(
         edges=[edges[k] for k in sorted(edges)],
         paths=paths,
         catalog=template,
+        briefing_choices=choices,
     )
 
 
@@ -219,7 +225,13 @@ and destructive operations require human approval.
 Return JSON matching ReportContent. Copy executive_summary and severity exactly
 from catalog. Copy each statement verbatim, including entity_ids and path_ids.
 You may reorder catalog statements and action lists to prioritize them; do not
-omit catalog entries, change text, or add prose. Keep all supporting_paths and
+omit factual catalog entries, change text, or add prose. For briefings, select
+claim_ids to create distinct role narratives; prioritize action_indices and
+question_indices and compare only supplied mitigation_ids. These reference the
+briefing_choices catalog. Never supply new numbers, paths or causal certainty.
+An incident commander needs impact and priorities; an owner needs dependency
+evidence and validation; business stakeholders need customer/workflow exposure.
+Keep all supporting_paths and
 unknowns. Graph analytics, risk scores, and candidates cannot be revised by you."""
 
 
@@ -268,6 +280,7 @@ def provider_evidence(evidence: EvidencePackage) -> dict:
         if analysis
         else [],
         "catalog": evidence.catalog.model_dump(),
+        "briefing_choices": evidence.briefing_choices,
     }
 
 
@@ -301,6 +314,9 @@ def grounding_errors(content: ReportContent, evidence: EvidencePackage) -> list[
     ):
         if sorted(getattr(content, field)) != sorted(getattr(evidence.catalog, field)):
             errors.append("Unsupported or missing actions, paths, or unknowns detected")
+    errors += validate_briefings(
+        content.briefings, evidence.briefing_choices, content.immediate_actions
+    )
     return sorted(set(errors))
 
 
@@ -361,6 +377,7 @@ def generate_report(evidence: EvidencePackage, settings: Settings) -> IncidentRe
         model=model,
         grounding_warnings=sorted(set(warnings)),
         evidence_paths=evidence.paths,
+        briefing_choices=evidence.briefing_choices,
     )
     if any(
         key and key in report.model_dump_json()

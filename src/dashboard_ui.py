@@ -240,6 +240,7 @@ def executive(bundle: DashboardResult) -> None:
         st.warning("Regional exposure assessment. Alternate deployments may preserve availability.")
         st.write(bundle.analysis_scope)
     elif report:
+        st.markdown("**Graph-grounded incident briefing**")
         st.write(report.executive_summary)
         st.caption(
             f"Report editor: {report.provider} / {report.model}. Graph services determine the facts and scores."
@@ -249,6 +250,37 @@ def executive(bundle: DashboardResult) -> None:
                 "Report used a safe fallback or grounding safeguards. "
                 "See Warnings and unknown information for the reason."
             )
+        if report.briefings:
+            role = st.selectbox(
+                "Briefing audience", [item.role for item in report.briefings], key="briefing_role"
+            )
+            briefing = next(item for item in report.briefings if item.role == role)
+            choices = report.briefing_choices
+            for identifier in briefing.claim_ids:
+                claim = choices["claims"][identifier]
+                st.write(claim["text"])
+                st.caption(
+                    "Evidence: "
+                    + identifier
+                    + " · "
+                    + ", ".join(claim["path_ids"] or claim["entity_ids"])
+                )
+            st.write("Prioritized validation and response")
+            for number in briefing.action_indices:
+                st.write(report.immediate_actions[number])
+            for number in briefing.question_indices:
+                st.caption("Validate: " + choices["questions"][number])
+            with st.expander("Compare fictional mitigations — supplied simulation evidence"):
+                st.dataframe(
+                    [
+                        {"action": name, **choices["mitigations"][name]}
+                        for name in briefing.mitigation_ids
+                    ],
+                    hide_index=True,
+                )
+                st.caption(
+                    "Scenario comparison only. No action is executed; human approval is required."
+                )
     left, right = st.columns([1.2, 1])
     with left:
         st.markdown("**Confirmed graph facts**")
