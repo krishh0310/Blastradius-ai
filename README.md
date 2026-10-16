@@ -64,7 +64,7 @@ demo graph, not valuable data.
 ## Major features
 
 Measured on the local 54-node / 141-edge graph: native blast query round-trip
-median **3.786 ms**, full no-LLM pipeline median **32.130 ms** (20 iterations,
+median **3.699 ms**, full no-LLM pipeline median **33.167 ms** (20 iterations,
 2 warm-ups; cached global snapshot; excludes UI rendering and startup).
 [Method, p95, raw samples and limitations](docs/benchmark.md). Not a production benchmark.
 
@@ -323,6 +323,8 @@ pip-audit --cache-dir .audit-cache --progress-spinner off
 Coverage is enforced at 80%. Provider calls are mocked. Integration tests require
 the seeded local graph; importer tests create uniquely named disposable graphs.
 [Security boundaries](docs/hardening.md) and [phase baseline](docs/baseline-audit.md).
+
+[Final submission audit: 89/100 internal assessment](docs/final-audit.md).
 
 [CI workflow and manual repository choices](docs/repository-quality.md): quality
 checks run on push/pull request; disposable FalkorDB integration is manual opt-in.

@@ -121,8 +121,8 @@ coverage; real provider calls and manual visual checks remain separately unverif
     single-region component envelope in this fixture, not a separate regional risk
     formula. The UI labels that scope; regional exposure alone is not global failure.
 15. **What did you actually measure?** Local warm-graph software timings over
-    20 runs after two warm-ups: native blast query median 3.786 ms, no-LLM pipeline
-    32.130 ms. UI/startup/global snapshot download/provider time are excluded.
+    20 runs after two warm-ups: native blast query median 3.699 ms, no-LLM pipeline
+    33.167 ms. UI/startup/global snapshot download/provider time are excluded.
     No operator study, real outage recovery, Linux CI run or provider success was measured.
 
 ## Backup plans

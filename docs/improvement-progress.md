@@ -143,3 +143,13 @@ The opening explicitly corrects the all-healthy-topology assumption: recorded
 Orders Database is degraded; the simulator's baseline is fictional healthy.
 Local document links checked. Actual presenter timing/recording, screenshots,
 team details, provider opt-in and publication remain owner actions.
+
+## Phase 12
+
+Phase 11 commit: `8afb7d9`. Added the final read-only audit: internal score 89/100,
+category evidence, weaknesses, full-mark requirements and submission priorities.
+Re-ran the benchmark on reviewed source e3096d5 in the fresh environment:
+native query median 3.699 ms, pipeline 33.167 ms; counts unchanged. Earlier raw
+benchmark samples remain labeled separately. README/demo figures refreshed.
+No application source changed since the fully verified clean-room commit.
+Manual screenshots, presentation timing, live providers and remote CI are not claimed.

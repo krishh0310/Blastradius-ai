@@ -1,5 +1,28 @@
 # Measured local graph benchmark
 
+## Final reviewed-source repeat
+
+Repeated on 2026-10-16 using archived application commit `e3096d5` and the fresh
+clean-room environment: 20 measured iterations after two warm-ups, same graph
+and exclusions below. These are the final submission numbers; the earlier run
+and its raw samples remain below for transparency. Timing variation is expected.
+
+| Operation | Median ms | p95 ms |
+|---|---:|---:|
+| direct_one_hop | 0.699 | 1.459 |
+| native_blast_radius | 4.549 | 5.601 |
+| native_blast_query | 3.699 | 3.844 |
+| native_investigation | 25.031 | 34.793 |
+| networkx_analytics | 1.021 | 1.062 |
+| deterministic_report | 0.061 | 0.066 |
+| pipeline_without_llm | 33.167 | 43.279 |
+
+Counts were unchanged: 54 nodes / 141 relationships; 33 returned evidence nodes,
+35 evidence relationships, 21 unique impact paths, maximum seven context hops,
+three direct components, fifteen multi-hop components and six customers.
+
+## Earlier measurement and retained raw samples
+
 Measured 2026-10-16 on macOS-26.6.2-arm64-arm-64bit, Python 3.12.14, arm64.
 Source base: a473542 plus the benchmark addition. 2 warm-up runs and 20
 measured iterations per operation. p95 uses nearest rank (ceil(0.95 × N)).
