@@ -180,12 +180,26 @@ def run_investigation(
     settings: Settings,
     use_provider: bool = False,
     progress: Callable[[str], None] | None = None,
+    use_native: bool = False,
 ) -> DashboardResult:
     """Compose verified services; provider execution happens only on explicit submit."""
     started = perf_counter()
     stage = progress or (lambda text: None)
     stage("Traverse dependencies and collect graph evidence")
-    result = investigate(prepared.queries, component)
+    if use_native:
+        from src.database import DatabaseError, DatabaseManager
+        from src.native_queries import NativeGraphQueries
+
+        try:
+            with DatabaseManager(settings) as db:
+                result = investigate(NativeGraphQueries(db, prepared.queries.limits), component)
+        except DatabaseError:
+            result = investigate(prepared.queries, component)
+            result.warnings.append(
+                "Native query unavailable; bounded Python fallback uses the displayed snapshot."
+            )
+    else:
+        result = investigate(prepared.queries, component)
     notes = incident_text[:2000]
     for secret in (settings.gemini_api_key, settings.groq_api_key):
         if secret:

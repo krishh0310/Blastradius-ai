@@ -39,6 +39,8 @@ class InvestigationResult(BaseModel):
     evidence_edges: list[Relationship] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)
     query_execution_ms: float = 0
+    reasoning_engine: str = "bounded Python fallback"
+    query_diagnostics: list[dict] = Field(default_factory=list)
 
 
 def investigate(queries: GraphQueries, component: str) -> InvestigationResult:
@@ -47,7 +49,11 @@ def investigate(queries: GraphQueries, component: str) -> InvestigationResult:
     queries.warnings.clear()
     lookup = queries.exact_lookup(component)
     result = InvestigationResult(
-        incident_input=component, matched_component=lookup.matched, suggestions=lookup.suggestions
+        incident_input=component,
+        matched_component=lookup.matched,
+        suggestions=lookup.suggestions,
+        reasoning_engine=getattr(queries, "reasoning_engine", "bounded Python fallback"),
+        query_diagnostics=getattr(queries, "diagnostics", []),
     )
     if lookup.matched is None:
         result.warnings.append(
@@ -120,6 +126,7 @@ def investigate(queries: GraphQueries, component: str) -> InvestigationResult:
         )
     )
     result.query_execution_ms = (perf_counter() - started) * 1000
+    result.query_diagnostics = list(getattr(queries, "diagnostics", []))
     return result
 
 
@@ -143,8 +150,9 @@ def main() -> int:
             max_edges=args.max_edges,
         )
         with DatabaseManager(Settings.from_env()) as db:
-            queries = GraphQueries.from_database(db, limits)
-        result = investigate(queries, args.component)
+            from src.native_queries import NativeGraphQueries
+
+            result = investigate(NativeGraphQueries(db, limits), args.component)
         result.query_execution_ms = (perf_counter() - started) * 1000
         if args.json:
             print(result.model_dump_json(indent=2))

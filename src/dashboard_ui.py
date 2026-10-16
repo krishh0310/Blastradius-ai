@@ -794,6 +794,7 @@ def main() -> None:
                     settings,
                     use_provider,
                     progress=lambda stage: st.write("✓ " + stage),
+                    use_native=True,
                 )
                 st.session_state["result_bundle"] = bundle
                 st.session_state["result_origin"] = origin
