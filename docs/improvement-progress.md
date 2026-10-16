@@ -71,3 +71,14 @@ and customer data is explicitly fictional. Native versus global snapshot roles,
 limits, region-envelope semantics and constrained AI value are explicit.
 Local README links resolve; Ruff and formatting pass. Setup was exercised in
 Phase 5. No screenshot, cloud-provider or production claim is fabricated.
+
+## Phase 7
+
+Phase 6 commit: `b52a429`. Files: dashboard_ui.py, test_demo_shortcuts.py,
+README, screenshots.md and assets/.gitkeep. One-click Run Demo disables cloud
+providers; evidence anchor and simulation navigation added; fictional preview
+does not fabricate measured results. Shortcut regression failed before the change
+and now passes. Entire nonintegration suite: **138 passed / 20 skips; 85.14%
+coverage**. Ruff/format pass. Real Streamlit launch requested for startup check.
+Browser inventory has no enabled browser surfaces; actual captures and manual
+wide/narrow checks remain checklist items, not claimed as completed.

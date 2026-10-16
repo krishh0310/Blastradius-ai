@@ -104,6 +104,23 @@ def reset_session() -> None:
     st.session_state["workspace"] = "Investigation"
 
 
+def run_demo() -> None:
+    """One-click deterministic rehearsal; never enables external providers."""
+    st.session_state.update(
+        scenario="Token Vault timeout", depth=6, use_provider=False, run_demo_requested=True
+    )
+    apply_scenario()
+
+
+def open_mitigation() -> None:
+    """Navigate only; the separate simulator still requires explicit controls."""
+    st.session_state.update(
+        workspace="Cascade simulation",
+        sim_component=st.session_state.get("component", "vault"),
+        sim_playing=False,
+    )
+
+
 def table(rows: list[dict], message: str = "No graph evidence in this category.") -> None:
     if rows:
         st.dataframe(rows, hide_index=True, width="stretch")
@@ -792,6 +809,13 @@ def main() -> None:
     submitted = st.sidebar.button("Investigate", type="primary", width="stretch", key="investigate")
     st.sidebar.button("Reset", on_click=reset_session, width="stretch", key="reset")
     st.sidebar.caption("Reset clears this workspace, not the database.")
+    demo, evidence, simulate = st.columns(3)
+    demo.button("Run Demo", key="run_demo", on_click=run_demo, width="stretch")
+    evidence.markdown("[View FalkorDB Evidence](#falkordb-evidence)")
+    simulate.button(
+        "Simulate Mitigation", key="open_mitigation", on_click=open_mitigation, width="stretch"
+    )
+    submitted = submitted or st.session_state.pop("run_demo_requested", False)
     origin = (settings.falkordb_host, settings.falkordb_port, settings.falkordb_graph)
     if st.session_state.get("result_origin") not in (None, origin):
         st.session_state.pop("result_bundle", None)
@@ -854,6 +878,11 @@ def main() -> None:
             "<p>Start with Token Vault. Follow dependencies through payments, checkout, "
             "and business workflows to the customers they serve. Every impact has a path.</p>"
             "<p>Choose a scenario in the sidebar, then select <strong>Investigate</strong>.</p></section>"
+        )
+        st.info(
+            "Fictional preview: shared dependency timeout → technical exposure → customer workflow → "
+            "graph evidence → compare containment. Run Demo calculates the actual bounded result; "
+            "no cloud provider or real infrastructure action is involved."
         )
         st.caption(
             f"Loaded {len(topology.nodes)} nodes and {len(topology.relationships)} relationships. "

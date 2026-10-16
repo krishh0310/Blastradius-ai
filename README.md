@@ -17,6 +17,9 @@ not a guarantee of complete real-world knowledge.
 **Dashboard screenshot:** pending real capture; no fabricated screenshot is used.  
 **Demo video/GIF:** [team to add a real recording URL before submission].
 
+[Capture checklist and filenames](docs/screenshots.md). Use Run Demo, View
+FalkorDB Evidence, and Simulate Mitigation for the short judge-facing flow.
+
 ## The problem
 
 A shared dependency can disrupt services, business workflows and customers several
