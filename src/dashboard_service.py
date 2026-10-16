@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 from src.analytics import Analytics, ComponentAnalysis
 from src.config import Settings
-from src.graph_queries import EvidencePath, GraphQueries, Impact, QueryLimits
+from src.graph_queries import EvidencePath, GraphQueries, Impact, QueryLimits, edge_key
 from src.investigator import InvestigationResult, investigate
 from src.reports import IncidentReport, build_evidence, generate_report
 from src.topology import OWNED_LABELS
@@ -193,6 +193,15 @@ def run_investigation(
         try:
             with DatabaseManager(settings) as db:
                 result = investigate(NativeGraphQueries(db, prepared.queries.limits), component)
+            snapshot_edges = {edge_key(edge): edge for edge in prepared.queries.edges}
+            if any(
+                prepared.queries.nodes.get(node.id) != node for node in result.evidence_nodes
+            ) or any(snapshot_edges.get(edge_key(edge)) != edge for edge in result.evidence_edges):
+                result = investigate(prepared.queries, component)
+                result.warnings.append(
+                    "Graph changed since the cached analytics snapshot; using consistent "
+                    "snapshot evidence. Refresh graph for current facts."
+                )
         except DatabaseError:
             result = investigate(prepared.queries, component)
             result.warnings.append(

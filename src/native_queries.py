@@ -91,7 +91,12 @@ class NativeGraphQueries(GraphQueries):
         rows = self.db.execute_query(cypher, parameters)
         if name == "component_lookup" and len(rows) > 1:
             raise ValueError("Duplicate component ID in native evidence")
-        truncated = len(rows) > self.limits.max_paths
+        budget = (
+            max(2, self.limits.search_limit)
+            if name.startswith("component_")
+            else self.limits.max_paths
+        )
+        truncated = len(rows) > budget
         if truncated:
             self._warn(f"{name}: result limit reached; evidence may be incomplete")
         self.diagnostics.append(
@@ -104,7 +109,7 @@ class NativeGraphQueries(GraphQueries):
                 "truncated": truncated,
             }
         )
-        return rows[: self.limits.max_paths]
+        return rows[:budget]
 
     def exact_lookup(self, value: str) -> Lookup:
         if len(value) > 512:
@@ -341,7 +346,11 @@ class NativeGraphQueries(GraphQueries):
 
     def cycles(self):
         if self.nodes:
-            depth = self._depth(None)
+            # Structural cycle evidence is independent of incident impact depth.
+            depth = self._depth(8)
+            self._warn(
+                "Cycle discovery checks closed walks up to 8 hops; longer cycles may be omitted."
+            )
             rows = self._query(
                 "dependency_cycles",
                 f"MATCH p=(a:Component)"

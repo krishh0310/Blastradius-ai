@@ -1,6 +1,6 @@
 # Native incident reasoning
 
-The CLI and dashboard's operational investigation route incident-specific
+The investigator CLI and dashboard's operational investigation route incident-specific
 dependency and cross-domain path retrieval through `NativeGraphQueries`.
 It starts with an empty evidence cache, not a full graph export. FalkorDB returns
 typed paths; Python validates their nodes, stored relationship directions,
@@ -43,6 +43,19 @@ snapshot and labels the result `bounded Python fallback`. Invalid graph evidence
 fails validation rather than being silently accepted. The CLI fails clearly if
 native retrieval is unavailable. Regional envelope composition remains explicitly
 Python-based, rather than claiming an independent native regional risk model.
+
+If observed native node/edge properties differ from the cached analytics snapshot,
+the dashboard discards that attempt and explicitly uses consistent snapshot
+evidence until refresh. This prevents mixing new entities with old analytics or
+report facts. It is not transactional snapshot isolation: deletions elsewhere or
+changes between individual queries may remain undetected. Native lookup ambiguity
+uses its own budget (at least two matches), never the path-result cap.
+
+Structural cycle discovery has a separate fixed eight-hop bound, independent of
+the selected incident impact depth. Thus a one-hop email API investigation can
+still explain the known two-node dependency cycle touching an exposed service.
+Longer cycles may be omitted; the result states this explicitly. Global NetworkX
+SCC analytics remains available on the bounded full projection.
 
 The pinned server exhibited incorrect context-edge endpoints for mixed-direction
 paths with a zero-length variable prefix during integration testing. Direct

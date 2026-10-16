@@ -102,3 +102,20 @@ Historical scan regression first failed, then passed; safe current/history
 scan reports zero findings. YAML parsed and jobs inspected; Ruff/format/Bandit
 passed. Complete nonintegration suite: **141 passed / 20 skipped, 85.14%
 coverage**. No workflow was pushed or executed on GitHub; no badge claims otherwise.
+
+## Pre-clean-room review fixes
+
+Phase 9 commit: `f27c0a6`. A fresh read-only reviewer found lookup ambiguity
+under max_paths=1 and inconsistent native/cache facts after topology changes.
+Both regressions reproduced failures before fixes. Lookup budgets now preserve
+ambiguity independently; observed drift explicitly uses one labeled snapshot.
+Expanded parity added suggestions, shortest/critical paths and cycles, exposing
+a depth-one structural-cycle omission; cycle discovery now has its own bounded
+eight-hop budget and a longer-cycle warning. Added native parallel/truncation
+checks. Files: native_queries.py, dashboard_service.py, evidence_ui.py,
+test_native_queries.py, test_snapshot_drift.py, native-falkordb.md, ledger.
+Full live suite: **166 passed, zero skipped, 88.97% coverage**; Ruff/format pass.
+One attempted live run had 20 connection failures because Docker Desktop had
+stopped; daemon/socket inspection established the cause. Starting Docker and
+the existing Compose service restored health; no development graph reset.
+Remaining limitation: observed-drift checks are not transactional isolation.

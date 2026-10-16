@@ -90,7 +90,7 @@ def render_evidence(result: InvestigationResult) -> None:
     with st.expander("Executed Cypher and safe query receipts", expanded=False):
         if not result.query_diagnostics:
             st.info(
-                "No native query executed for this result. The displayed engine is the Python snapshot fallback."
+                "No native query receipts support this result. It uses the labeled Python snapshot."
             )
         for query in result.query_diagnostics:
             st.write(
