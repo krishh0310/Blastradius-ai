@@ -82,3 +82,13 @@ and now passes. Entire nonintegration suite: **138 passed / 20 skips; 85.14%
 coverage**. Ruff/format pass. Real Streamlit launch requested for startup check.
 Browser inventory has no enabled browser surfaces; actual captures and manual
 wide/narrow checks remain checklist items, not claimed as completed.
+
+## Phase 8
+
+Phase 7 commit: `a473542`. Files: scripts/benchmark.py, test_benchmark.py,
+benchmark.md, README and ledger. Bounded timing helper had failing tests before
+implementation. Twenty actual iterations per operation after two warm-ups;
+raw samples, medians and nearest-rank p95 recorded. Native blast query median
+3.786 ms; full no-LLM pipeline 32.130 ms. No SQL/user-study/provider comparison
+was invented. Complete nonintegration suite: **140 passed, 20 skipped, 85.14%
+coverage**. Benchmark helper tests, Ruff/format passed. Small warm graph only.

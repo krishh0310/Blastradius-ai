@@ -63,6 +63,11 @@ demo graph, not valuable data.
 
 ## Major features
 
+Measured on the local 54-node / 141-edge graph: native blast query round-trip
+median **3.786 ms**, full no-LLM pipeline median **32.130 ms** (20 iterations,
+2 warm-ups; cached global snapshot; excludes UI rendering and startup).
+[Method, p95, raw samples and limitations](docs/benchmark.md). Not a production benchmark.
+
 - Typed exact/fuzzy component discovery and upstream/downstream evidence.
 - Required versus optional dependencies, cycle-safe bounded traversal.
 - Customer, business-workflow, region, owner and runbook impact.
