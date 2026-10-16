@@ -1,5 +1,17 @@
 # Final submission audit
 
+## Approved follow-up verification
+
+The narrow follow-up from e4ba035 adds benchmark instrumentation/tests and docs,
+not application behavior. Full live suite: **167 passed, zero skipped, 88.97%
+statement coverage**. Native/reference parity remained green. Latest measurements
+are in benchmark.md: cached Python blast traversal median 0.035 ms versus native
+typed retrieval 4.714 ms (different retrieval costs); native query 3.753 ms and
+no-LLM pipeline 32.781 ms. No speedup is claimed. The reference review and history
+index are now present. Internal score remains **89/100**: this closes documentation
+and measurement gaps, not the manual visual/provider/remote-CI evidence gaps.
+The original audit below remains a dated record of the earlier source verification.
+
 Date: 2026-10-16. Application audited/tested at `e3096d5`; submission documents
 through `8afb7d9` plus this final documentation pass. No application changes in
 this audit. Evidence states below distinguish executed checks from inspection.

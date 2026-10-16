@@ -64,7 +64,7 @@ demo graph, not valuable data.
 ## Major features
 
 Measured on the local 54-node / 141-edge graph: native blast query round-trip
-median **3.699 ms**, full no-LLM pipeline median **33.167 ms** (20 iterations,
+median **3.753 ms**, full no-LLM pipeline median **32.781 ms** (20 iterations,
 2 warm-ups; cached global snapshot; excludes UI rendering and startup).
 [Method, p95, raw samples and limitations](docs/benchmark.md). Not a production benchmark.
 
@@ -325,6 +325,11 @@ the seeded local graph; importer tests create uniquely named disposable graphs.
 [Security boundaries](docs/hardening.md) and [phase baseline](docs/baseline-audit.md).
 
 [Final submission audit: 89/100 internal assessment](docs/final-audit.md).
+
+[Development history](docs/development-history.md) and
+[conceptual reference review](docs/reference-review.md) keep phase records and
+external research separate from product claims. The latest benchmark also reports
+cached Python fallback costs; it does not establish a native database speedup.
 
 [CI workflow and manual repository choices](docs/repository-quality.md): quality
 checks run on push/pull request; disposable FalkorDB integration is manual opt-in.

@@ -296,11 +296,11 @@ fifteen total multi-hop-traversal components (including workflows), six customer
 }
 ```
 
-## Final reviewed-source repeat
+## Prior reviewed-source repeat
 
 Repeated on 2026-10-16 using archived application commit `e3096d5` and the fresh
 clean-room environment: 20 measured iterations after two warm-ups, same graph
-and exclusions below. These are the final submission numbers; the earlier run
+and exclusions below. These predate the follow-up comparison above; the earlier run
 and its raw samples remain below for transparency. Timing variation is expected.
 
 | Operation | Median ms | p95 ms |

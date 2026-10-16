@@ -167,3 +167,20 @@ radius 0.035 ms; no-LLM pipeline 32.781 ms. No native speedup claim.
 Ruling: retain approved in-place improvement branch rather than create another
 worktree — preserves the requested branch and existing verified environment;
 cost: no additional filesystem isolation from future user edits.
+
+## Approved follow-up — references and history
+
+Benchmark commit: `9c8dd20`. Added development-history.md and reference-review.md;
+linked README and updated benchmark/demo/audit/validation without erasing older
+executed results. Nine public reference READMEs/descriptions retrieved; GraphOps
+page/API unavailable. Only PyRCA direct license text retrieved; other displayed
+license labels are explicitly not full legal verification. No code/assets reused.
+Risk weights, topology, scoring, providers and UI unchanged; internal score stays 89.
+
+Ruff/format (62 files), compileall, Bandit, pip check, current/history secret scan,
+local Markdown links and diff whitespace checks passed. Live health OK; graph
+integrity 54/141 with zero errors and expected cycle. No advisory audit repeated.
+
+Fresh read-only final review: no Critical or Important findings. The sole minor
+was unchecked follow-up plan boxes, now marked after verification. No deferred
+minors. Keeping the improvement branch as-is; main, remotes and publication unchanged.

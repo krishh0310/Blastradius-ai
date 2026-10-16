@@ -1,5 +1,34 @@
 # Final clean-room validation
 
+## Approved follow-up (existing environment, not another clean-room install)
+
+Started from clean main at e4ba035. The existing improvement branch was safely
+fast-forwarded to preserve all newer commits. Only scripts/benchmark.py, its tests
+and documentation changed; src/ and app.py were not modified.
+
+Executed with Python 3.12.14 and the already healthy loopback FalkorDB container:
+
+```zsh
+env -u GEMINI_API_KEY -u GROQ_API_KEY FALKORDB_INTEGRATION=1 LLM_PROVIDER=deterministic python -m pytest -q
+env -u GEMINI_API_KEY -u GROQ_API_KEY LLM_PROVIDER=deterministic python -m scripts.benchmark --iterations 20 --warmup 2
+```
+
+Full suite: **167 passed, zero skipped, 88.97% statement coverage**, 16.53 seconds.
+The added benchmark regression first failed because Python timing keys were
+absent, then passed after using the existing fallback operations. Twenty measured
+samples after two warm-ups include both engines; raw values and exclusions are
+in benchmark.md. Graph counts remained 54 nodes / 141 relationships.
+
+Ruff, formatting (62 Python files), compileall, Bandit, pip check, current/history
+secret scanning, git diff whitespace validation and local Markdown link checks
+passed. Health reported configuration/connectivity OK; read-only seed validation
+reported zero integrity errors and the expected Analytics–Notification cycle.
+These checks used the existing environment; no dependency advisory audit was
+repeated in this follow-up. The earlier advisory result remains dated below.
+
+No provider calls, screenshots, remote CI or repeated clean-room installation
+were performed for this follow-up. The earlier clean-room record follows.
+
 Date: **2026-10-16**. Tested application/source commit:
 **e3096d580206f3b4b3701cb7ee35e209b2c63063**, branch
 `improve/hackathon-final`. Subsequent submission documents do not change that
