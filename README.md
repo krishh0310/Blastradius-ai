@@ -15,7 +15,7 @@ interactive graph evidence, five demo scenarios, and nine investigation tabs.
 
 ```zsh
 source .venv/bin/activate
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-dev.txt
 docker compose up -d --wait
 python -m streamlit run app.py --server.address 127.0.0.1
 ```
@@ -42,7 +42,7 @@ ownership rules, demonstration queries, and reset limitations.
 
 ```zsh
 source .venv/bin/activate
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-dev.txt
 docker compose up -d --wait
 python -m src.seed
 python -m src.seed
@@ -92,11 +92,11 @@ LLM_FALLBACK_ENABLED=true setting.
 Run these commands from `blastradius-ai` in a zsh terminal:
 
 ```zsh
-/opt/homebrew/bin/python3.12 -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-cp .env.example .env
+python -m pip install -r requirements-dev.txt
+test -e .env || cp .env.example .env
 docker compose up -d
 ```
 

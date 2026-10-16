@@ -51,3 +51,13 @@ passed after first demonstrating missing functionality. Entire nonintegration
 suite: **137 passed, 20 skipped; 85.08% coverage**, Ruff/format pass.
 No real provider call made. Narrative wording remains catalog-derived by design;
 provider value is role selection/prioritization, not unconstrained prose.
+
+## Phase 5
+
+Phase 4 commit: `3e56c86`. Files: README and setup/dashboard/simulation/
+investigation/analytics documentation. One canonical PATH-based Python 3.12 setup
+installs requirements-dev.txt (which includes runtime requirements), preserves
+existing dotenv configuration and seeds before validating an empty graph.
+Machine-specific paths removed from the edited guides; troubleshooting added.
+A fresh temporary virtual environment installed declared dependencies, passed
+pip check and **137 tests / 20 skips, 85.08% coverage**. No provider calls.

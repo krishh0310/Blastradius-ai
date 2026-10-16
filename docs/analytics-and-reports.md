@@ -35,9 +35,9 @@ queries, tools, shell commands, or remediation actions.
 ## Run
 
 ```zsh
-cd "/Users/krish/Documents/graph hack/blastradius-ai"
+# Run from the repository root after docs/setup.md.
 source .venv/bin/activate
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-dev.txt
 docker compose up -d --wait
 python -m src.analytics --component "Token Vault" --status failed
 python -m src.analytics --component "Orders Database" --status degraded --json

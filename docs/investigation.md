@@ -1,5 +1,7 @@
 # Phase 3 graph operations and investigation
 
+Install development requirements using [canonical setup](setup.md) before testing.
+
 The investigator reads the selected FalkorDB graph. It never reads the JSON
 fixture in production, changes component status, invokes an LLM, or seeds data.
 The result describes potential dependency exposure under the supplied failure

@@ -3,8 +3,9 @@
 ## Run the dashboard
 
 ```zsh
-cd "/Users/krish/Documents/graph hack/blastradius-ai"
+# Run from the repository root after docs/setup.md.
 source .venv/bin/activate
+python -m pip install -r requirements-dev.txt
 docker compose up -d --wait
 python -m streamlit run app.py --server.address 127.0.0.1
 ```
