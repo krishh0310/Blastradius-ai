@@ -1,0 +1,19 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: Ruff lint
+        entry: .venv/bin/ruff check
+        language: system
+        types: [python]
+      - id: ruff-format
+        name: Ruff formatting
+        entry: .venv/bin/ruff format --check
+        language: system
+        types: [python]
+      - id: secret-scan
+        name: Source and tracked dotenv secret scan
+        entry: .venv/bin/python scripts/check_secrets.py
+        language: system
+        pass_filenames: false
+        always_run: true

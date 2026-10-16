@@ -1,0 +1,1 @@
+"""BlastRadius AI application package."""

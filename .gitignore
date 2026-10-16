@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+.audit-cache/
+.ruff_cache/
+coverage.xml
+coverage.json
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store
