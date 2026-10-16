@@ -844,6 +844,9 @@ def main() -> None:
         )
     st.subheader(bundle.investigation.matched_component.name)
     metric_cards(bundle)
+    from src.evidence_ui import render_evidence
+
+    render_evidence(bundle.investigation)
     tabs = st.tabs(TABS)
     with tabs[0]:
         executive(bundle)

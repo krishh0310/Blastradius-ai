@@ -28,3 +28,14 @@ implementation. Live typed parity checks pass at depths 1/6/8 for five component
 The entire suite passes: **150 tests, 88.44% coverage**; Ruff/format pass.
 Limitations and the observed zero-length-prefix workaround are documented in
 native-falkordb.md. Global analytics still uses a bounded snapshot by design.
+
+## Phase 3
+
+Phase 2 commit: `fc8a3ab`. Files: evidence_ui.py, dashboard_ui.py,
+test_evidence_panel.py and this ledger. The above-tabs FalkorDB Evidence section
+shows returned counts, engine, timings, limit warnings, complete customer path,
+separate owner branch, flat-versus-multi-hop comparison and actual query receipts.
+Evidence selection/empty/partial regressions first failed, then passed.
+Complete nonintegration suite: **132 passed, 20 skipped**, **84.75% coverage**;
+Ruff/format passed. Live parity was verified in Phase 2; UI still needs fresh
+manual viewport review. No claim of server nodes examined is made.
