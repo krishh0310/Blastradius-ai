@@ -20,6 +20,14 @@ def test_regional_tools_preserve_deployment_and_business_paths(graph):
     assert "envelope" in " ".join(risk.warnings).lower()
 
 
+def test_depth_eight_risk_keeps_bounded_ranked_explanations_without_changing_score(graph):
+    result = service(graph).call("calculate_risk", {"component": "vault", "depth": 8})
+    assert result.analysis.risk.score == 91.62
+    assert len(result.analysis.critical_paths) <= 10
+    assert len(result.analysis.critical_path_rankings) <= 10
+    assert any("explanations limited" in warning for warning in result.warnings)
+
+
 def service(graph):
     from src.tooling import ToolService
 

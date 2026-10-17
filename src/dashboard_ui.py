@@ -108,7 +108,7 @@ def run_demo() -> None:
     """One-click deterministic rehearsal; never enables external providers."""
     st.session_state.update(
         scenario="Token Vault timeout",
-        depth=6,
+        depth=8,
         use_provider=False,
         run_demo_requested=True,
         result_show_receipts=False,

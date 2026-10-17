@@ -34,6 +34,7 @@ def test_agent_trace_and_confirmed_simulation(topology, graph):
         assert not app.exception
         assert any(item.value == "Agent Tool Trace" for item in app.subheader)
         result = app.session_state["result_agent"]
+        assert app.session_state["depth"] == 8
         assert len(result.trace) == 7 and result.recommendation.eligible
         assert app.button(key="open_mitigation").disabled
         app.checkbox(key="result_action_confirm").check().run()

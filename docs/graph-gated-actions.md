@@ -1,5 +1,10 @@
 # Graph-gated fictional actions
 
+Simulation honors the tool's selected depth 1–8 and surfaces baseline and policy
+replay warnings. The primary Token Vault demo selects 8; CLI/default tool requests
+use 6. Do not compare a depth-limited simulated cohort directly with the separate
+potential-exposure investigation card or imply that truncated impact is complete.
+
 The agent inspects ownership/runbook and action evidence before recommending a
 policy. It never auto-confirms or runs simulation while investigating. The normal
 seven-call plan leaves the eighth call for human-confirmed simulation; a completed

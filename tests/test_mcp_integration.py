@@ -69,7 +69,7 @@ def test_live_stdio_registry_and_confirmed_action_preserve_seed():
             assert ToolResult.model_validate(reply.structured_content).error == "invalid_input"
             reply = await client.call_tool("lookup_component", {"component": "vault", "depth": 9})
             assert ToolResult.model_validate(reply.structured_content).error == "invalid_input"
-        request = AgentRequest(component="vault")
+        request = AgentRequest(component="vault", depth=8)
         result = await run_agent_mcp(request)
         denied = await simulate_recommended(result, request, confirmed=False)
         assert len(denied.trace) == 7

@@ -61,7 +61,12 @@ def test_confirmed_simulation_rechecks_gate_and_keeps_graph_unchanged(graph):
     assert no_replica.error == "action_rejected"
     result = tools.call(
         "simulate_fictional_mitigation",
-        {"component": "vault", "action": "isolate_unhealthy_dependency", "confirmed": True},
+        {
+            "component": "vault",
+            "depth": 8,
+            "action": "isolate_unhealthy_dependency",
+            "confirmed": True,
+        },
     )
     assert result.error is None
     assert result.simulation.risk_reduction == 49
@@ -88,7 +93,7 @@ def test_confirmed_mcp_action_is_eighth_call_and_cannot_repeat(graph):
     from src.mcp_server import create_server
 
     service = ToolService(Settings(), queries=graph)
-    request = AgentRequest(component="vault")
+    request = AgentRequest(component="vault", depth=8)
     result = asyncio.run(run_agent(request, service.execute))
     refused = asyncio.run(
         simulate_recommended(result, request, confirmed=False, server=create_server(service))
@@ -137,6 +142,22 @@ def test_regional_replica_gate_and_comparison(graph):
     assert result.simulation.removed_critical_paths
     # Mumbai failover cannot recover the unreplicated Vault that sets the score envelope.
     assert result.simulation.risk_reduction == 0
+
+
+@pytest.mark.parametrize("depth", [1, 2])
+def test_simulation_respects_tool_depth_and_preserves_limit_warnings(graph, depth):
+    result = ToolService(Settings(), queries=graph).call(
+        "simulate_fictional_mitigation",
+        {
+            "component": "vault",
+            "depth": depth,
+            "action": "isolate_unhealthy_dependency",
+            "confirmed": True,
+        },
+    )
+    assert result.simulation
+    assert all(event.dependency_path.hops <= depth for event in result.simulation.events)
+    assert any("depth reached" in warning.lower() for warning in result.warnings)
 
 
 @pytest.mark.parametrize(

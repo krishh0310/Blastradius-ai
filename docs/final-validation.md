@@ -9,22 +9,28 @@ No deployment, push, new external account, real cloud action or topology reset.
 
 ### Actually verified
 
+- **Latest post-review full live suite: 220 passed, zero skipped; 89.43% statement
+  coverage, 44.65 seconds.** This includes the depth/warning regressions and
+  bounded critical-path explanation regression. Ruff, formatting, compileall,
+  Bandit, pip check and diff whitespace checks passed again after the fix.
+
 - Official MCP SDK 2.3.0 on Python 3.12.14: real stdio initialization, discovery of
   eleven typed tools and native FalkorDB requests. Unit tests also use the actual
   SDK's in-memory transport; they are not proof of database connectivity by themselves.
-- Fresh Python3.12 virtual environment: documented development dependencies
+- Fresh Python 3.12 virtual environment: documented development dependencies
   installed successfully and `pip check` passed. Full live suite in that fresh
-  environment: **217 passed, zero skipped; 89.30% statement coverage**, 60.93seconds.
+  environment before the final depth/warning review fix: **217 passed, zero skipped;
+  89.30% statement coverage**, 60.93 seconds.
   Source was the current checkout, not a separately archived clean checkout;
   this verifies a clean dependency environment, not a brand-new machine.
-  The existing environment's preceding run passed216/216 at89.17% before the
-  additional regional-action regression; all14 action tests subsequently passed.
+  The existing environment's preceding run passed 216/216 at 89.17% before the
+  additional regional-action regression; all 14 action tests subsequently passed.
 - All five real MCP scenarios and all five Streamlit AppTest scenarios pass.
   Agent trace tests check consent, eight-call limit, reset and rerun stability.
 - Seven Token Vault investigation calls; the eighth is the separately confirmed
   simulation. Native receipts include query parameters/timings; returned paths
   preserve original edges, required flags, criticality and hop counts.
-- Token Vault: **91.62 → 42.62**, reduction **49.00** under fictional containment;
+- Token Vault at simulation depth 8: **91.62 → 42.62**, reduction **49.00** under fictional containment;
   real stdio integration asserts database contents are unchanged afterward.
 - Mumbai regional replica gate is evidence-backed: **40 → 30 affected entities**,
   ten critical paths removed. The component-envelope score remains **91.62**:
@@ -43,6 +49,44 @@ No deployment, push, new external account, real cloud action or topology reset.
   key absent; Ollama not started. No live cloud-generation success is claimed.
 - No-key deterministic agent/MCP/UI tests explicitly removed Gemini/Groq keys.
   Local operation still needs FalkorDB, installed packages and the Docker image.
+- Individual real-stdio smoke requests succeeded for **all eleven MCP tools**,
+  including upstream traversal, workflows and critical paths beyond the default
+  agent route. Both existing and fresh dependency environments passed advisory
+  checks. All **54 local links/heading references** across 13 Markdown files resolved.
+
+### Final independent review and fix
+
+One fresh-context read-only reviewer reran 42 focused tests and found one important
+adapter issue: simulation ignored the requested depth and dropped truncation
+warnings. No critical or minor findings were raised. Shallow-depth regressions
+failed first, then passed after the adapter forwarded depth and preserved both
+baseline/replay warnings through an additive typed field. The full-depth demo now
+explicitly selects depth 8. A related live output-cap rejection was reproduced;
+risk tools now return the top ten ranked path explanations with an explicit
+omission warning, preserving the existing numeric score and 120 KB cap. The
+focused post-fix suite passed **45 tests**; latest complete rerun is **220/220**
+at **89.43% coverage**, recorded above. No second reviewer or provider call was
+used for the fix pass. No minor findings were deferred.
+
+Review exclusions are deliberate boundaries, not unreported verification:
+public-host authentication and real mitigation are out of local-demo scope;
+regional probability remains a disclosed component envelope; live cloud success,
+manual viewport inspection and video remain pending; hard thread termination and
+atomic multi-tool reads are not promised. Do not publicly expose these local ports.
+
+### Changed files
+
+Runtime/config: `requirements.txt`, `mcp.example.json`; `src/tooling.py`,
+`mcp_server.py`, `agent.py`, `actions.py`, `agent_ui.py`, `dashboard_ui.py`,
+`native_queries.py`, `simulator.py`. `app.py` remains a thin unchanged entry point.
+
+Tests: `test_tooling.py`, `test_agent.py`, `test_actions.py`, `test_agent_ui.py`,
+`test_mcp_integration.py`, `test_native_queries.py`, `test_demo_shortcuts.py`.
+
+Documentation: `README.md`; `docs/mcp-tooling.md`, `agent-tool-trace.md`,
+`graph-gated-actions.md`, `video-checklist.md`, `demo-script.md`, `setup.md`,
+`hardening.md`, `submission-checklist.md`, `final-validation.md`. No existing
+technical document or screenshot was removed. New source/data do not contain keys.
 
 ### Remaining limitations / submission blockers
 
@@ -55,7 +99,7 @@ No remote CI result is claimed. Fresh virtual environment is not a brand-new Mac
 MCP stdio is trusted local single-operator transport, not a publicly authenticated
 service. A third-party host must enforce human consent itself. Worker deadlines
 do not forcibly kill Python threads; the busy gate refuses overlapping work.
-Tool outputs are capped at 120 KB and 100 paths (default60); incomplete results
+Tool outputs are capped at 120 KB and 100 paths (default 60); incomplete results
 warn or fail closed. Calls use separate reads, not one transactional incident
 snapshot. Native evidence/snapshot checks reject observed node/edge drift for
 operational scoring; this cannot guarantee consistency across multiple tools.
@@ -71,7 +115,7 @@ not database execution or autonomous real-world remediation.
 |---|---:|---|---|
 | Problem importance | 9/10 | `README.md`, five fictional outage scenarios execute | No operator study or real telemetry validation |
 | Graph necessity | 14/15 | `native_queries.py`, live customer paths and reference parity | SQL recursion remains possible; no comparative operator study |
-| FalkorDB depth | 14/15 | Native Cypher, bounded paths, index/seed/parity and injection tests | Small54-node fixture; no production-scale validation |
+| FalkorDB depth | 14/15 | Native Cypher, bounded paths, index/seed/parity and injection tests | Small 54-node fixture; no production-scale validation |
 | Multi-hop reasoning | 10/10 | Native three-plus-hop customer evidence, direction/cycle tests | Completeness is limited by declared budgets, not universal reachability |
 | Algorithms as tools | 9/10 | `tooling.py`, `analytics.py`, structural/risk tool tests | No scale or sensitivity validation of heuristic weights |
 | MCP / tool selection | 8/10 | `mcp_server.py`, `agent.py`; real stdio/discovery, adaptive tests | Rule-based intent router; external host interoperability not manually inspected |
@@ -79,7 +123,7 @@ not database execution or autonomous real-world remediation.
 | Grounding / explainability | 9/10 | Strict claim catalog, provider mocks, paths and visible trace | Real provider success pending; prompts cannot prove a causal root |
 | Implementation | 5/5 | Modular service/UI boundary; lint/types/schema/security checks | Local hackathon scope, not a production certification |
 | Reliability / testing | 4/5 | Full live coverage suite, five UI scenarios, no-key operation | Manual viewports, video and remote CI pending |
-| **Total** | **90/100** | Technical Track01 fit demonstrated locally | **Video still blocks submission readiness** |
+| **Total** | **90/100** | Technical Track 01 fit demonstrated locally | **Video still blocks submission readiness** |
 
 ### Reproduce (macOS / zsh, activated environment)
 

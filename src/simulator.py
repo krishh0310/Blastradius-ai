@@ -97,6 +97,7 @@ class MitigationResult(BaseModel):
     risk_reduction: float
     unmitigated_settled_risk: float
     explanation: str
+    warnings: list[str] = Field(default_factory=list)
 
 
 def evidence_path(ids: list[str], edges: list[Relationship]) -> EvidencePath:
@@ -536,6 +537,7 @@ class Simulator:
             removed_critical_paths=removed,
             risk_reduction=round(before.risk.score - after.risk.score, 2),
             unmitigated_settled_risk=before.risk.score,
+            warnings=sorted(set(run.warnings + alternate.warnings)),
             explanation="Counterfactual replay from the same healthy baseline. Runbook recovery assumes "
             "success; isolation assumes a graceful-degradation circuit breaker. No edge is "
             "deleted and no real action is executed. Required consumers are never bypassed "

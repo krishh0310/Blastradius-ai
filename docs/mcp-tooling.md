@@ -39,7 +39,11 @@ Each result includes original-edge paths, relationship types, hops, required fla
 criticality, stable evidence IDs, query diagnostics, engine, elapsed time and warnings.
 Known key material is redacted before output; errors use fixed categories.
 Results above 120 KB fail closed rather than imply complete evidence. Path/entity
-caps warn. Default tool wait deadline is 15 seconds; server query timeout remains
+caps warn. Risk tools retain at most the top ten ranked critical-path explanations
+(or max_paths if smaller), warning on omission; the numerical calculation is not
+changed. Additional paths remain available through find_critical_paths. Simulation
+uses the requested depth and retains baseline and mitigation truncation warnings.
+Default tool wait deadline is 15 seconds; server query timeout remains
 three seconds. A timed-out worker can finish read-only bounded work, but a single
 worker gate refuses more requests until it finishes. This is not a hard CPU kill.
 

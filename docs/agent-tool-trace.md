@@ -9,6 +9,10 @@ In Streamlit, select **Run Token Vault Agent**, **View FalkorDB Evidence**, then
 check the fictional-action confirmation and select **Simulate Recommended
 Mitigation**. These are three main actions plus explicit safety consent. The
 sidebar Investigate button supports the other scenarios and component choices.
+The primary Token Vault button selects depth 8 for the full fictional cascade;
+the CLI defaults to depth 6. Simulation honors the selected depth and retains
+both baseline and mitigation warnings. A depth-limited comparison may omit later
+customer transitions; its score is not the headline investigation cohort score.
 
 The Agent Tool Trace panel shows incident, order, selection reason, arguments,
 sanitized structured output, original relationship direction/type, required flag,

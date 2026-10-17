@@ -126,10 +126,12 @@ def simulate_action(graph: GraphQueries, args, result: ToolResult) -> ToolResult
             component_id=result.component.id,
             failure_status="degraded" if args.status == "degraded" else "down",
             automatic_failover=False,
+            depth=args.depth,
         ),
     )
     before = simulator.run()
     replay = simulator.mitigate(before, ACTION_LABELS[args.action])
+    result.warnings += replay.warnings
     result.simulation = SimulationSummary(
         action=args.action,
         before_score=before.frames[-1].risk.score,
@@ -140,8 +142,9 @@ def simulate_action(graph: GraphQueries, args, result: ToolResult) -> ToolResult
         risk_reduction=replay.risk_reduction,
         removed_critical_paths=replay.removed_critical_paths,
         events=replay.events,
-        explanation="Before assumes no automatic failover; after is an approved fictional policy replay. "
-        + replay.explanation,
+        explanation=f"Simulation depth {args.depth}: these scores use simulated affected entities, "
+        "not the investigation's potential-exposure cohort. Before assumes no automatic failover; "
+        "after is an approved fictional policy replay. " + replay.explanation,
     )
     result.warnings.append(
         "Fictional simulation only; seeded graph and real infrastructure are unchanged."

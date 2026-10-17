@@ -167,6 +167,18 @@ class ToolService:
                 result.query_diagnostics = list(getattr(q, "diagnostics", []))
                 result.warnings = sorted(set(result.warnings + q.warnings))
             result.duration_ms = round((perf_counter() - started) * 1000, 3)
+            if result.analysis:
+                limit = min(args.max_paths, 10)
+                if len(result.analysis.critical_path_rankings) > limit:
+                    result.analysis.critical_path_rankings = result.analysis.critical_path_rankings[
+                        :limit
+                    ]
+                    result.analysis.critical_paths = [
+                        item.path for item in result.analysis.critical_path_rankings
+                    ]
+                    result.warnings.append(
+                        f"Critical-path explanations limited to top {limit}; use find_critical_paths for additional bounded paths. Risk calculation is unchanged."
+                    )
             for field in ("impacts", "customers", "workflows", "owners", "runbooks"):
                 items = getattr(result, field)
                 if len(items) > args.max_paths:
