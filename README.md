@@ -533,7 +533,32 @@ signals, versioned snapshots, calibrated risk weights, verified failover metadat
 authenticated multi-tenant access and provenance-linked runbook/postmortem
 retrieval. Each requires its own permission, privacy and validation design.
 
-## Team and license
+## Public source repository
+
+Source: [krishh0310/Blastradius-ai](https://github.com/krishh0310/Blastradius-ai).
+On October 17, 2026, an unauthenticated GitHub API check confirmed public
+visibility and `main` at `c0c26484b5af6b42c26df51de1d25bdae63a1aa1`, matching
+the local committed application revision. No sign-in was required for that check.
+This verifies the committed code at that revision, not subsequent unpushed edits;
+the owner must publish the final README and confirm the submission link before submitting.
+
+## AI assistance disclosure
+
+**OpenAI Codex was used as an AI coding assistant** during development, including
+implementation, debugging, test development, code review and documentation.
+The participant directed the project scope and demo scenarios and supplied
+screenshots from the running application. Automated verification results and
+remaining limitations are recorded in [final validation](docs/final-validation.md).
+
+AI assistance does not replace participant responsibility: the submitting
+participant/team must review and understand the code, verify its claims, and be
+able to explain the graph model, Cypher queries, MCP tools and technical decisions.
+This disclosure is not a claim that every generated suggestion was independently
+verified by a human. Using Codex for development does **not** add an OpenAI API
+or package dependency to the application; runtime providers remain Gemini, Groq,
+Ollama and deterministic reporting.
+
+## Team, ownership and conduct
 
 Author attribution: **Kadempally Sai Krish Karthik**, as recorded in [LICENSE](LICENSE).
 Confirm the submission team roster and add the owner-recorded demo link before
@@ -542,3 +567,12 @@ submitting.
 Application code is licensed under the **MIT License**. Third-party components
 retain their own licenses. No database source is vendored, and no deployment,
 external account or paid service is required to run the local demonstration.
+
+The existing license attribution is preserved; it is not independent proof of
+authorship or a team ownership agreement. Participants remain responsible for
+confirming their rights to submitted work and assets and agreeing on ownership
+with any teammates. The submission must comply with the hackathon rules and the
+[WeMakeDevs Code of Conduct](https://www.wemakedevs.org/coc), including respectful
+participation and no harassment, discrimination, plagiarism or judging manipulation.
+Conduct and team agreements require participant confirmation; repository checks
+cannot certify them.
