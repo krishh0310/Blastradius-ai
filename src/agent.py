@@ -209,10 +209,93 @@ async def run_agent(
     completed = {step.tool for step in result.trace if not step.output.error}
     if {"calculate_risk", "get_owner_and_runbook"} <= completed:
         result.final_confidence = "Graph-supported exposure"
+        from src.actions import recommend_action
+
+        ownership = next(step for step in result.trace if step.tool == "get_owner_and_runbook")
+        result.recommendation = recommend_action(ownership.output.action_eligibility)
     result.warnings += [
         "Root causes remain candidates; topology and fictional simulation do not confirm causation."
     ]
     result.warnings = sorted(set(result.warnings))
+    return AgentResult.model_validate_json(sanitize(result.model_dump_json(), settings))
+
+
+def mcp_target(settings: Settings):
+    """Fixed local module and a key-free child environment, never caller commands."""
+    return StdioServerParameters(
+        command=sys.executable,
+        args=["-m", "src.mcp_server"],
+        cwd=Path(__file__).resolve().parents[1],
+        env={
+            "FALKORDB_HOST": settings.falkordb_host,
+            "FALKORDB_PORT": str(settings.falkordb_port),
+            "FALKORDB_GRAPH": settings.falkordb_graph,
+            "LLM_PROVIDER": "deterministic",
+        },
+    )
+
+
+async def simulate_recommended(
+    result: AgentResult,
+    request: AgentRequest,
+    *,
+    confirmed: bool,
+    settings: Settings | None = None,
+    server=None,
+) -> AgentResult:
+    """Human-approved eighth MCP call; server independently rechecks action gates."""
+    settings = settings or Settings.from_env()
+    result = result.model_copy(deep=True)
+    if confirmed is not True:
+        result.warnings.append("Explicit confirmation is required; no simulation was called.")
+        return result
+    if len(result.trace) >= request.max_calls or any(
+        step.tool == "simulate_fictional_mitigation" for step in result.trace
+    ):
+        result.stopping_reason = "Tool-call budget exhausted or duplicate simulation prevented."
+        return result
+    if not result.recommendation or not result.recommendation.eligible or not result.trace:
+        result.warnings.append("No evidence-supported recommendation is available.")
+        return result
+    matched = result.trace[0].output.component
+    if matched is None or request.component != result.component:
+        result.warnings.append(
+            "Selected component changed; rerun the investigation before confirmation."
+        )
+        return result
+    args = ToolInput(
+        component=matched.id,
+        depth=request.depth,
+        max_paths=request.max_paths,
+        status=request.status,
+    ).model_dump()
+    args.update(action=result.recommendation.action, confirmed=True)
+    try:
+        async with asyncio.timeout(30):
+            async with Client(server or mcp_target(settings), read_timeout_seconds=20) as client:
+                reply = await client.call_tool("simulate_fictional_mitigation", args)
+                output = ToolResult.model_validate(reply.structured_content)
+    except Exception:
+        output = ToolResult(
+            tool="simulate_fictional_mitigation",
+            error="unavailable",
+            warnings=["MCP simulation unavailable; no real actions performed."],
+        )
+    result.trace.append(
+        ToolTrace(
+            order=len(result.trace) + 1,
+            tool="simulate_fictional_mitigation",
+            reason="Human confirmed the recommended fictional action; fresh graph gates were rechecked.",
+            inputs=args,
+            output=output,
+        )
+    )
+    result.warnings += output.warnings
+    result.stopping_reason = (
+        "Fictional simulation completed; seeded graph and real infrastructure unchanged."
+        if output.simulation
+        else "Action rejected or unavailable; no real remediation performed."
+    )
     return AgentResult.model_validate_json(sanitize(result.model_dump_json(), settings))
 
 
@@ -222,17 +305,7 @@ async def run_agent_mcp(
     """Production agent always discovers/invokes actual MCP tools over local stdio."""
     settings = settings or Settings.from_env()
     if server is None:
-        server = StdioServerParameters(
-            command=sys.executable,
-            args=["-m", "src.mcp_server"],
-            cwd=Path(__file__).resolve().parents[1],
-            env={
-                "FALKORDB_HOST": settings.falkordb_host,
-                "FALKORDB_PORT": str(settings.falkordb_port),
-                "FALKORDB_GRAPH": settings.falkordb_graph,
-                "LLM_PROVIDER": "deterministic",
-            },
-        )
+        server = mcp_target(settings)
     try:
         async with asyncio.timeout(120):
             async with Client(server, read_timeout_seconds=20) as client:

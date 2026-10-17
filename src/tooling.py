@@ -10,14 +10,14 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
-from src.analytics import Analytics, ComponentAnalysis, Metrics
+from src.analytics import Analytics, ComponentAnalysis, Metrics, RiskScore
 from src.config import Settings
 from src.database import DatabaseError, DatabaseManager
 from src.graph_queries import Deployment, EvidencePath, GraphQueries, Impact, QueryLimits
 from src.investigator import investigate
 from src.native_queries import NativeGraphQueries
 from src.reports import path_id
-from src.simulator import MitigationResult
+from src.simulator import TimelineEvent
 from src.topology import Node, Topology
 
 logger = logging.getLogger(__name__)
@@ -64,6 +64,24 @@ class ActionEvidence(BaseModel):
     paths: list[EvidencePath] = Field(default_factory=list)
 
 
+class SimulatedState(BaseModel):
+    risk: RiskScore
+    affected_ids: list[str]
+    statuses: dict[str, str]
+    timestamp_seconds: int
+
+
+class SimulationSummary(BaseModel):
+    action: str
+    before_score: float
+    before_affected_ids: list[str]
+    after: SimulatedState
+    risk_reduction: float
+    removed_critical_paths: list[EvidencePath]
+    events: list[TimelineEvent]
+    explanation: str
+
+
 class ToolResult(BaseModel):
     """Every successful factual claim has typed original-edge evidence."""
 
@@ -82,7 +100,7 @@ class ToolResult(BaseModel):
     metrics: Metrics | None = None
     analysis: ComponentAnalysis | None = None
     action_eligibility: list[ActionEvidence] = Field(default_factory=list)
-    simulation: MitigationResult | None = None
+    simulation: SimulationSummary | None = None
     query_diagnostics: list[dict] = Field(default_factory=list)
     reasoning_engine: str = "not executed"
     duration_ms: float = 0
@@ -207,6 +225,14 @@ class ToolService:
             )
             if name == "get_owner_and_runbook":
                 result.owners, result.runbooks = q.teams(affected), q.runbooks(affected)
+                from src.actions import action_options
+
+                graph = snapshot()
+                if graph.nodes.get(root.id) != root:
+                    raise ValueError("Action evidence changed")
+                result.action_eligibility = action_options(graph, root.id, status=args.status)
+                for action in result.action_eligibility:
+                    result.paths += action.paths
             else:
                 result.workflows = q.workflows(affected)
                 if name == "find_customer_impact":
@@ -238,8 +264,12 @@ class ToolService:
                     investigation.impacted_workflows,
                 )
         elif name == "simulate_fictional_mitigation":
-            result.error = "unavailable"
-            result.warnings.append("Fictional action gates are not available")
+            from src.actions import simulate_action
+
+            graph = snapshot()
+            if graph.nodes.get(root.id) != root:
+                raise ValueError("Action evidence changed")
+            return simulate_action(graph, args, result)
         for impact in (
             result.impacts + result.customers + result.workflows + result.owners + result.runbooks
         ):
