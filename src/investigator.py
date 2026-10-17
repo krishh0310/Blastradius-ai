@@ -149,7 +149,7 @@ def main() -> int:
             max_nodes=args.max_nodes,
             max_edges=args.max_edges,
         )
-        with DatabaseManager(Settings.from_env()) as db:
+        with DatabaseManager(Settings.from_env(), read_only=True) as db:
             from src.native_queries import NativeGraphQueries
 
             result = investigate(NativeGraphQueries(db, limits), args.component)

@@ -37,8 +37,11 @@ class DatabaseManager:
         self,
         settings: Settings,
         client_factory: Callable[..., Any] = _create_falkordb_client,
+        *,
+        read_only: bool = False,
     ) -> None:
         self.settings = settings
+        self.read_only = read_only
         self._client_factory = client_factory
         self._client: Any | None = None
         self._graph: Any | None = None
@@ -92,16 +95,17 @@ class DatabaseManager:
         cypher: str,
         parameters: Mapping[str, Any] | None = None,
     ) -> list[list[Any]]:
-        """Execute a Cypher query against the selected graph and return its rows."""
+        """Run bounded Cypher; read-only managers use server-enforced GRAPH.RO_QUERY."""
         if not cypher.strip():
             raise ValueError("Cypher query must not be empty")
 
         graph = self.connect()
         try:
+            query = graph.ro_query if self.read_only else graph.query
             result = (
-                graph.query(cypher, params=dict(parameters), timeout=3000)
+                query(cypher, params=dict(parameters), timeout=3000)
                 if parameters is not None
-                else graph.query(cypher, timeout=3000)
+                else query(cypher, timeout=3000)
             )
             return result.result_set
         except Exception as exc:

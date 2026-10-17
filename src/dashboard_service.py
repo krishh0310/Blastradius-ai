@@ -191,7 +191,7 @@ def run_investigation(
         from src.native_queries import NativeGraphQueries
 
         try:
-            with DatabaseManager(settings) as db:
+            with DatabaseManager(settings, read_only=True) as db:
                 result = investigate(NativeGraphQueries(db, prepared.queries.limits), component)
             snapshot_edges = {edge_key(edge): edge for edge in prepared.queries.edges}
             if any(

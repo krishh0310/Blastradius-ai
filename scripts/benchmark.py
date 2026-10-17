@@ -37,7 +37,7 @@ def measure(operation: Callable[[], object], *, iterations: int, warmup: int) ->
 
 def run(iterations: int = 20, warmup: int = 2) -> dict:
     """Read the configured demo graph; no provider call or graph write path."""
-    with DatabaseManager(Settings.from_env()) as db:
+    with DatabaseManager(Settings.from_env(), read_only=True) as db:
         graph = GraphQueries.from_database(db)
         result = investigate(NativeGraphQueries(db), "vault")
         if result.matched_component is None:

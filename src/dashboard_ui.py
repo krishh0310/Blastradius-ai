@@ -71,7 +71,7 @@ LIMIT $limit"""
 def read_snapshot(host: str, port: int, graph: str) -> tuple[str, str]:
     """Cache facts only; no secret, Settings object, or database handle is cached."""
     settings = Settings(falkordb_host=host, falkordb_port=port, falkordb_graph=graph)
-    with DatabaseManager(settings) as database:
+    with DatabaseManager(settings, read_only=True) as database:
         database.test_connection()
         queries = GraphQueries.from_database(database, QueryLimits(depth=8))
     topology = Topology(nodes=list(queries.nodes.values()), relationships=queries.edges)

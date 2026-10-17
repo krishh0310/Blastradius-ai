@@ -398,7 +398,7 @@ def main() -> int:
         settings = Settings.from_env()
         if args.deterministic:
             settings = settings.model_copy(update={"llm_provider": "deterministic"})
-        with DatabaseManager(settings) as db:
+        with DatabaseManager(settings, read_only=True) as db:
             queries = GraphQueries.from_database(db)
         result = investigate(queries, args.component)
         analysis = (

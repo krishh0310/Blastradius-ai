@@ -136,7 +136,7 @@ class ToolService:
             )
             yield graph, lambda: graph
         else:
-            with DatabaseManager(self.settings) as db:
+            with DatabaseManager(self.settings, read_only=True) as db:
                 yield NativeGraphQueries(db, limits), lambda: GraphQueries.from_database(db, limits)
 
     def call(self, name: str, arguments: dict) -> ToolResult:

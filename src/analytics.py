@@ -398,7 +398,7 @@ def main() -> int:
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
     try:
-        with DatabaseManager(Settings.from_env()) as db:
+        with DatabaseManager(Settings.from_env(), read_only=True) as db:
             queries = GraphQueries.from_database(db)
         analytics = Analytics(queries)
         top = analytics.highest_risk(min(5, len(analytics.graph)))

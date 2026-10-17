@@ -89,6 +89,40 @@ def test_database_reports_connection_errors_without_leaking_details() -> None:
     assert "secret transport detail" not in str(error.value)
 
 
+@pytest.mark.parametrize("parameters", [None, {"value": 1}])
+def test_readonly_manager_never_uses_write_capable_query(parameters) -> None:
+    graph = Mock()
+    graph.query.side_effect = AssertionError("Write-capable route must not run")
+    graph.ro_query.return_value = SimpleNamespace(result_set=[[1]])
+    client = Mock()
+    client.select_graph.return_value = graph
+    manager = DatabaseManager(Settings(), client_factory=Mock(return_value=client), read_only=True)
+    assert manager.execute_query("RETURN $value" if parameters else "RETURN 1", parameters) == [[1]]
+    graph.ro_query.side_effect = RuntimeError("private backend response")
+    with pytest.raises(DatabaseQueryError) as error:
+        manager.execute_query("RETURN 1")
+    assert "private backend response" not in str(error.value)
+
+
+@pytest.mark.skipif(os.environ.get("FALKORDB_INTEGRATION") != "1", reason="Requires local FalkorDB")
+def test_live_readonly_rejects_write_on_disposable_graph():
+    from uuid import uuid4
+
+    settings = Settings.from_env().model_copy(
+        update={"falkordb_graph": "readonly_test_" + uuid4().hex}
+    )
+    with DatabaseManager(settings) as writer:
+        try:
+            writer.execute_query("CREATE (:Probe {id: 'original'})")
+            with DatabaseManager(settings, read_only=True) as reader:
+                assert reader.execute_query("MATCH (n:Probe) RETURN n.id") == [["original"]]
+                with pytest.raises(DatabaseQueryError):
+                    reader.execute_query("CREATE (:Probe {id: 'blocked'})")
+                assert reader.execute_query("MATCH (n:Probe) RETURN count(n)") == [[1]]
+        finally:
+            writer.connect().delete()
+
+
 def test_database_reports_a_missing_client_dependency_clearly() -> None:
     missing_client = ModuleNotFoundError("No module named 'falkordb'", name="falkordb")
     manager = DatabaseManager(

@@ -553,7 +553,7 @@ def main() -> int:
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
     try:
-        with DatabaseManager(Settings.from_env()) as database:
+        with DatabaseManager(Settings.from_env(), read_only=True) as database:
             q = GraphQueries.from_database(database)
         simulator = Simulator(
             Topology(nodes=list(q.nodes.values()), relationships=q.edges),

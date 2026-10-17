@@ -55,6 +55,7 @@ python -m streamlit run app.py
 Open http://127.0.0.1:8501. Normal seeding merges the fictional fixture without
 resetting the graph; use a dedicated demo graph, not valuable data.
 [Complete macOS setup and troubleshooting](docs/setup.md).
+[Official FalkorDB review and GraphRAG-SDK decision](docs/technology-decisions.md).
 
 > BlastRadius AI is a local hackathon demonstration using fictional infrastructure, incidents, organizations and customers. It does not connect to live cloud systems, confirm causation, or execute real remediation.
 

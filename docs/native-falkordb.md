@@ -8,6 +8,11 @@ properties and identities, deduplicates, and formats them. Full bounded snapshot
 remain necessary for cached global NetworkX analytics, component selection,
 simulation, and the explicitly labeled Python fallback.
 
+Production read paths use the official client's `Graph.ro_query` through
+`DatabaseManager(..., read_only=True)`: FalkorDB rejects writes on that query
+route. Seeding stays explicitly write-capable. This does not replace credential
+or transport security. See [official-reference decisions](technology-decisions.md).
+
 Native operations: exact/name lookup, upstream/downstream traversal, bounded
 shortest/all-required/critical path selection from returned ordered paths,
 complete workflow/customer paths, owner teams, runbooks, regions, deployment and

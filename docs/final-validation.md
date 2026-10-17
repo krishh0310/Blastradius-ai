@@ -1,5 +1,28 @@
 # Final clean-room validation
 
+## Official-reference selective review — 2026-10-17
+
+Latest full live suite after adopting the installed official client's read-only
+query route: **223 passed, zero skipped; 89.44% statement coverage**, 44.55 seconds.
+The new tests verify parameterized read-only dispatch, sanitized failures and
+server rejection of writes in a uniquely named disposable graph. That test graph
+was deleted afterward; the seeded demo graph was not reset or deleted.
+
+Native/MCP/UI/analytics/simulation/provider-mock tests passed. Representative
+native downstream/deployment plans and exact lookup compiled through `Graph.explain`
+and used the existing ID index; this is not a measured speedup. Ruff, formatting,
+compileall, Bandit, pip check, whitespace checks, source secret scan (zero findings)
+and all 60 local documentation references passed. FalkorDB health passed and the
+seeded graph remains 54 nodes / 141 relationships. No dependency was added,
+installed or upgraded; no new advisory scan or provider call was performed.
+
+GraphRAG-SDK and an additional general-purpose MCP server were not installed.
+The structured topology, NetworkX model, eleven application MCP tools, provider
+adapters and fictional-only simulation remain intact. See
+[technology decisions and official sources](technology-decisions.md).
+Earlier manual-video, screenshot, cloud-generation, local-trust and graph-size
+limitations below still apply. This check was not a new-machine installation.
+
 ## Track 01 MCP verification — 2026-10-17
 
 Branch `feat/track01-agent-mcp`, based on `9eb43eb`. Implementation milestones:
