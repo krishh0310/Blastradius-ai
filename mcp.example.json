@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "blastradius": {
+      "command": "python",
+      "args": ["-m", "src.mcp_server"],
+      "env": {"LLM_PROVIDER": "deterministic"}
+    }
+  }
+}
