@@ -14,7 +14,7 @@ from src.graph_queries import (
     edge_key,
     evidence_edge_priority,
 )
-from src.topology import DEPENDENCIES, Node, Relationship, Topology
+from src.topology import DEPENDENCIES, OWNED_LABELS, Node, Relationship, Topology
 
 DEPENDENCY_TYPES = "|".join(sorted(DEPENDENCIES))
 SIMPLE_PATH = "all(n IN nodes(p) WHERE single(m IN nodes(p) WHERE m.id = n.id))"
@@ -248,6 +248,8 @@ class NativeGraphQueries(GraphQueries):
             ("OWNED_BY", "Team"),
             ("HAS_RUNBOOK", "Runbook"),
         }
+        if incoming:
+            allowed |= {("DEPLOYED_IN", item) for item in OWNED_LABELS}
         if (relationship, label) not in allowed:
             raise ValueError("Unsupported context relationship")
         if impacts:

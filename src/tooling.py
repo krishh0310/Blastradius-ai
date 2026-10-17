@@ -13,7 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from src.analytics import Analytics, ComponentAnalysis, Metrics, RiskScore
 from src.config import Settings
 from src.database import DatabaseError, DatabaseManager
-from src.graph_queries import Deployment, EvidencePath, GraphQueries, Impact, QueryLimits
+from src.graph_queries import Deployment, EvidencePath, GraphQueries, Impact, QueryLimits, edge_key
 from src.investigator import investigate
 from src.native_queries import NativeGraphQueries
 from src.reports import path_id
@@ -209,6 +209,19 @@ class ToolService:
             node_ids=[root.id], edges=[], hops=0, required=True, criticality=root.criticality
         )
         result.paths = [zero]
+        regional = None
+        if root.label == "Region" and name in {
+            "trace_downstream_blast_radius",
+            "find_customer_impact",
+            "find_business_workflows",
+            "get_owner_and_runbook",
+            "calculate_risk",
+        }:
+            from src.dashboard_service import PreparedGraph, regional_exposure
+
+            graph = snapshot()
+            regional, _ = regional_exposure(PreparedGraph(q, Analytics(graph), []), root.id)
+            result.warnings += regional.warnings
         if name == "lookup_component":
             return result
         if name == "inspect_falkordb_evidence":
@@ -218,10 +231,16 @@ class ToolService:
         elif name == "trace_upstream_dependencies":
             result.impacts = q.dependencies(root.id)
         elif name == "trace_downstream_blast_radius":
-            result.impacts = q.blast_radius(root.id)
+            result.impacts = (
+                regional.direct_impact + regional.cascading_impact
+                if regional
+                else q.blast_radius(root.id)
+            )
         elif name in {"find_customer_impact", "find_business_workflows", "get_owner_and_runbook"}:
-            affected = [Impact(component=root, hops=0, path=zero, required=True)] + q.blast_radius(
-                root.id
+            affected = [Impact(component=root, hops=0, path=zero, required=True)] + (
+                regional.direct_impact + regional.cascading_impact
+                if regional
+                else q.blast_radius(root.id)
             )
             if name == "get_owner_and_runbook":
                 result.owners, result.runbooks = q.teams(affected), q.runbooks(affected)
@@ -246,7 +265,23 @@ class ToolService:
         elif name in {"detect_bottlenecks", "calculate_risk"}:
             graph = snapshot()
             analysis = Analytics(graph)
-            if root.id not in analysis.graph:
+            if regional:
+                from src.dashboard_service import PreparedGraph, run_investigation
+
+                envelope = run_investigation(
+                    PreparedGraph(graph, analysis, []), root.id, "", args.status, self.settings
+                )
+                result.analysis = envelope.analysis
+                result.paths += regional.shortest_paths
+                result.customers, result.workflows = (
+                    regional.impacted_customers,
+                    regional.impacted_workflows,
+                )
+                result.warnings.append(
+                    "Regional score is an existing worst-case component envelope, not a region model: "
+                    + envelope.analysis_scope
+                )
+            elif root.id not in analysis.graph:
                 result.warnings.append(
                     "Structural/risk scoring applies to operational components, not an independent regional model"
                 )
@@ -255,7 +290,13 @@ class ToolService:
                 result.impacts = q.blast_radius(root.id)
             else:
                 investigation = investigate(q, root.id)
-                if any(graph.nodes.get(node.id) != node for node in investigation.evidence_nodes):
+                snapshot_edges = {edge_key(edge): edge for edge in graph.edges}
+                if any(
+                    graph.nodes.get(node.id) != node for node in investigation.evidence_nodes
+                ) or any(
+                    snapshot_edges.get(edge_key(edge)) != edge
+                    for edge in investigation.evidence_edges
+                ):
                     raise ValueError("Snapshot changed during tool call")
                 result.analysis = analysis.analyze(investigation, args.status)
                 result.paths += investigation.shortest_paths + investigation.critical_paths

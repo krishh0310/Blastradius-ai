@@ -118,6 +118,27 @@ def test_replica_action_compares_against_no_automatic_recovery(graph):
     assert result.simulation.risk_reduction > 0
 
 
+def test_regional_replica_gate_and_comparison(graph):
+    from src.actions import action_options
+
+    gate = next(
+        item
+        for item in action_options(graph, "mumbai")
+        if item.action == "activate_declared_replica"
+    )
+    assert gate.eligible
+    assert all(path.node_ids[0] == "mumbai" and path.hops >= 2 for path in gate.paths)
+    result = ToolService(Settings(), queries=graph).call(
+        "simulate_fictional_mitigation",
+        {"component": "mumbai", "action": "activate_declared_replica", "confirmed": True},
+    )
+    assert not result.error and result.simulation
+    assert len(result.simulation.after.affected_ids) < len(result.simulation.before_affected_ids)
+    assert result.simulation.removed_critical_paths
+    # Mumbai failover cannot recover the unreplicated Vault that sets the score envelope.
+    assert result.simulation.risk_reduction == 0
+
+
 @pytest.mark.parametrize(
     "component,action",
     [

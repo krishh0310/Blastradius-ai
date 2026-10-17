@@ -55,6 +55,26 @@ def test_native_limits_and_query_input():
         native.blast_radius("vault", 9)
 
 
+def test_native_reverse_deployment_context_is_allowlisted():
+    from src.graph_queries import EvidencePath, Impact
+    from src.seed import load_topology
+
+    cls = import_module("src.native_queries").NativeGraphQueries
+    calls = []
+    native = cls(SimpleNamespace(execute_query=lambda query, params: calls.append(query) or []))
+    region = next(node for node in load_topology().nodes if node.id == "mumbai")
+    root = Impact(
+        component=region,
+        hops=0,
+        required=True,
+        path=EvidencePath(node_ids=[region.id], edges=[], hops=0, required=True, criticality=0),
+    )
+    assert native.context([root], "DEPLOYED_IN", "Service", incoming=True) == []
+    assert "(b:Service)" in calls[0]
+    with pytest.raises(ValueError):
+        native.context([root], "DEPLOYED_IN", "Service) DELETE n //", incoming=True)
+
+
 def test_path_cap_never_turns_ambiguous_name_into_exact_match(topology):
     cls = import_module("src.native_queries").NativeGraphQueries
     first = topology.nodes[0].model_copy(update={"name": "Same"})

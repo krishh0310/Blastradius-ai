@@ -10,6 +10,16 @@ from mcp import Client
 from src.config import Settings
 
 
+def test_regional_tools_preserve_deployment_and_business_paths(graph):
+    tools = service(graph)
+    impact = tools.call("find_customer_impact", {"component": "mumbai"})
+    assert impact.customers
+    assert all(item.path.node_ids[0] == "mumbai" for item in impact.customers)
+    risk = tools.call("calculate_risk", {"component": "mumbai"})
+    assert risk.analysis and risk.analysis.risk.score == 91.62
+    assert "envelope" in " ".join(risk.warnings).lower()
+
+
 def service(graph):
     from src.tooling import ToolService
 
