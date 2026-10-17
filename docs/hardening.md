@@ -128,6 +128,17 @@ cover Gemini, Groq and Ollama. Groq's documented compatibility URL contains
 
 ## Verification status
 
+The [MCP boundary](mcp-tooling.md) accepts only eleven typed tools, fixed component
+syntax, strict depth/path limits and no extra arguments. It exposes no arbitrary
+Cypher, shell, Python or cloud executor. The agent caps calls at eight, blocks
+duplicates and keeps incident prose out of provider tool-selection prompts.
+[Action gates](graph-gated-actions.md) recheck supporting edges after consent;
+simulation is in-memory only. An external MCP host must supply its own trusted
+human-confirmation UI: a caller-supplied boolean is not remote authentication.
+Local stdio is a trusted single-operator boundary, not a public service.
+MCP workers do not receive provider keys, and results are sanitized/size-capped.
+Per-call snapshots are not transactionally consistent across a whole incident.
+
 [Final validation](final-validation.md) is the canonical dated record for tests,
 coverage, live-provider attempts, screenshots, graph integrity and unverified
 checks. This document states security boundaries, not a production certification.

@@ -6,6 +6,13 @@ mitigation outcomes shown are fictional. Software benchmark timings are separate
 
 ## Before going on stage
 
+For the current MCP-enabled interface, use the [owner recording checklist](video-checklist.md).
+The three main controls are **Run Token Vault Agent**, **View FalkorDB Evidence**
+and **Simulate Recommended Mitigation**, with an explicit consent checkbox before
+the third action. Show the Agent Tool Trace, including reasons and MCP transport.
+The detailed earlier narration below remains useful for graph/analytics context;
+its older Run Demo / Simulate Mitigation labels refer to the pre-MCP interface.
+
 Run the [setup and verification](setup.md), seed/validate, then leave the app open
 in Investigation with Token Vault timeout selected. Keep **Use configured LLM**
 off. Test Docker and power/sleep settings before presenting. Close secret-bearing

@@ -15,17 +15,26 @@ NetworkX computes structural metrics from a bounded snapshot. SQL could express
 recursive analysis too; the advantage here is relationship/path clarity, not a
 claim that a relational database cannot do it.
 
-## Try the online demo in three clicks
+## Track 01 demo: three main actions plus safety consent
 
-1. **Run Token Vault Demo** — compute Critical severity, the risk score, potentially
-   affected services/customers and maximum evidence hop depth.
+1. **Run Token Vault Agent** — watch bounded tool selection through the official
+   MCP client/server, native paths, business impact, bottleneck and risk evidence.
 2. **View FalkorDB Evidence** — open safe executed Cypher receipts, timings, limits
    and a service → workflow → customer path with supporting edge details.
-3. **Simulate Mitigation** — build the fictional cascade and containment comparison
-   using the existing simulator. Reset/replay controls remain available.
+3. Check the explicit fictional-action consent, then **Simulate Recommended
+   Mitigation** — recheck the graph gate and compare before/after in memory.
 
 The Token Vault demo always uses deterministic reporting; no API key is required.
 Optional Gemini, Groq and Ollama briefings do not determine infrastructure facts.
+The agent has an eight-call budget, including confirmed simulation. See
+[tool registry and MCP setup](docs/mcp-tooling.md), [selection trace](docs/agent-tool-trace.md)
+and [action gates](docs/graph-gated-actions.md). This targets
+[Track 01](https://www.wemakedevs.org/hackathons/falkordb#tracks), not agent memory
+or multi-agent coordination. FalkorDB is the factual context layer; it shapes
+which impacts and fictional actions the agent can support.
+
+**Not yet submission-ready:** the owner must record a working demo video for
+this undeployed project. [Manual video checklist](docs/video-checklist.md).
 
 ## Start locally
 
@@ -55,7 +64,7 @@ declared replica does not prove failover readiness.
 
 ![Real Token Vault dashboard: Critical heuristic exposure, 11 services and six customers](docs/assets/token-vault-investigation.png)
 
-Real Brave captures: [overview](docs/assets/dashboard-overview.png),
+Historical real Brave captures (2026-10-16, before the MCP trace UI): [overview](docs/assets/dashboard-overview.png),
 [native query receipts](docs/assets/falkordb-evidence.png),
 [customer path](docs/assets/customer-evidence.png), and
 [fictional cascade](docs/assets/cascade-simulation.png).
@@ -102,6 +111,10 @@ flowchart LR
     DB -->|"Bounded native Cypher paths and facts"| PY["Python orchestration / validation / scoring"]
     DB -->|"Bounded global graph snapshot"| NX["NetworkX structural analytics"]
     NX -->|"Centrality / PageRank / articulation / SCC"| PY
+    Agent["Bounded adaptive agent / deterministic planner"] -->|"Typed official MCP stdio calls"| MCP["11 allowlisted tools"]
+    MCP -->|"Native graph operations / structural algorithms"| PY
+    MCP -->|"Graph gate + explicit consent"| Sim["Fictional in-memory mitigation"]
+    UI -->|"Run agent / inspect trace / confirm simulation"| Agent
     PY -->|"Verified claim and path catalog"| AI["Optional Gemini / Groq / Ollama"]
     AI -->|"Validated role selection and priorities"| PY
     PY -->|"Typed results and simulation assumptions"| UI["Streamlit / Plotly"]
@@ -208,7 +221,7 @@ No simulation changes the seeded graph or executes infrastructure actions.
 
 ## Technology and repository
 
-Python 3.12; FalkorDB/Cypher; Docker Compose; NetworkX/SciPy; Pydantic;
+Python 3.12; FalkorDB/Cypher; official MCP Python SDK 2.3.0; Docker Compose; NetworkX/SciPy; Pydantic;
 python-dotenv; Streamlit; Plotly; pytest/coverage; Ruff; Bandit; pip-audit.
 Providers use direct HTTP adapters. No OpenAI service/SDK, Neo4j or LangChain.
 
@@ -217,6 +230,11 @@ app.py                    Thin entry point
 src/native_queries.py     Native typed path retrieval and query receipts
 src/graph_queries.py      Bounded Python reference/fallback operations
 src/investigator.py       Structured incident orchestration
+src/mcp_server.py         Official MCP stdio server and discovery
+src/tooling.py            Typed bounded allowlisted graph tools
+src/agent.py              Adaptive tool selection, budget and sanitized trace
+src/actions.py            Graph-gated fictional action eligibility
+src/agent_ui.py           Visible trace and confirmed comparison
 src/analytics.py          NetworkX metrics and explained scoring
 src/reports.py            Grounded report validation and provider routing
 src/briefings.py           Role narratives and fictional comparison evidence
@@ -313,6 +331,7 @@ No keys, model download or internet are needed after dependencies/image exist.
 python -m pip install -r requirements-dev.txt
 python -m pytest
 FALKORDB_INTEGRATION=1 python -m pytest
+python -m src.agent --component 'Token Vault' --depth 6
 ruff check .
 ruff format --check .
 python -m compileall -q src tests scripts app.py
@@ -329,10 +348,10 @@ the seeded local graph; importer tests create uniquely named disposable graphs.
 quality checks run on push/pull request; disposable FalkorDB integration is manual
 opt-in. No remote execution or passing badge is claimed.
 
-[Executed validation results](docs/final-validation.md): the latest live suite
-passed **168 tests with 88.97% statement coverage**, and all five scenarios were
-verified. Five real Brave screenshots exist; narrow layout and successful cloud
-generation remain unverified (the Groq attempt failed authentication).
+[Executed validation results](docs/final-validation.md) distinguish current MCP
+checks from historical baseline counts. Five historical Brave screenshots exist;
+new MCP-panel screenshots, narrow-layout inspection, owner-recorded video and
+successful cloud generation remain pending (Groq failed authentication).
 [Benchmarks](docs/benchmark.md) distinguish native database round-trips from
 cached Python traversal and do not claim a native speedup.
 

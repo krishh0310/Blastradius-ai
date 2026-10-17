@@ -39,6 +39,19 @@ Keys come only from the process environment; `.env` contains nonsecret settings.
 
 ## Verification
 
+The official MCP SDK is included in requirements.txt. After activating the
+environment and seeding FalkorDB:
+
+```zsh
+python -m src.agent --component 'Token Vault' --depth 6
+python -m src.agent --component 'Orders Database' --depth 6 --json
+```
+
+For a separate MCP host, see [local MCP configuration](mcp-tooling.md) and
+`mcp.example.json`. `python -m src.mcp_server` waits for MCP stdio requests;
+it is not a human-readable CLI. The dashboard launches its own local server.
+No provider key is sent to that worker. See [trace and consent](agent-tool-trace.md).
+
 ```zsh
 python -m pip install -r requirements-dev.txt
 python -m pip check

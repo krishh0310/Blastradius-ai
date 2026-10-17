@@ -1,6 +1,113 @@
 # Final clean-room validation
 
-## Latest technical / online-demo verification
+## Track 01 MCP verification — 2026-10-17
+
+Branch `feat/track01-agent-mcp`, based on `9eb43eb`. Implementation milestones:
+official MCP tools `ce948d7`, adaptive agent `eebd0df`, graph gates `67ac052`,
+UI trace/consent `8cf11b2`, live regional/MCP regressions `023ed50`.
+No deployment, push, new external account, real cloud action or topology reset.
+
+### Actually verified
+
+- Official MCP SDK 2.3.0 on Python 3.12.14: real stdio initialization, discovery of
+  eleven typed tools and native FalkorDB requests. Unit tests also use the actual
+  SDK's in-memory transport; they are not proof of database connectivity by themselves.
+- Fresh Python3.12 virtual environment: documented development dependencies
+  installed successfully and `pip check` passed. Full live suite in that fresh
+  environment: **217 passed, zero skipped; 89.30% statement coverage**, 60.93seconds.
+  Source was the current checkout, not a separately archived clean checkout;
+  this verifies a clean dependency environment, not a brand-new machine.
+  The existing environment's preceding run passed216/216 at89.17% before the
+  additional regional-action regression; all14 action tests subsequently passed.
+- All five real MCP scenarios and all five Streamlit AppTest scenarios pass.
+  Agent trace tests check consent, eight-call limit, reset and rerun stability.
+- Seven Token Vault investigation calls; the eighth is the separately confirmed
+  simulation. Native receipts include query parameters/timings; returned paths
+  preserve original edges, required flags, criticality and hop counts.
+- Token Vault: **91.62 → 42.62**, reduction **49.00** under fictional containment;
+  real stdio integration asserts database contents are unchanged afterward.
+- Mumbai regional replica gate is evidence-backed: **40 → 30 affected entities**,
+  ten critical paths removed. The component-envelope score remains **91.62**:
+  unreplicated Token Vault is still exposed. This is not a global failover claim.
+- Docker Desktop was initially stopped; after starting it, Compose health passed.
+  Normal idempotent seed and validation: **54 nodes / 141 relationships**, zero
+  errors, expected Analytics–Notification cycle. No reset or volume deletion.
+- Ruff, format, compileall, Bandit, pip check and Compose config pass. Current and
+  locally reachable Git-history secret scans: **zero findings**. `pip-audit`:
+  **no known vulnerabilities found** on this date, not a future guarantee.
+- Streamlit launched on loopback port **8529**; health endpoint returned `ok`.
+  The new UI was exercised through AppTest, not manual browser/viewport inspection.
+- One authorized Groq attempt, model **llama-3.3-70b-versatile**, with cross-provider
+  switching disabled: **authentication failure**. Actual report was deterministic,
+  with zero grounding errors. No key or raw provider response is stored. Gemini
+  key absent; Ollama not started. No live cloud-generation success is claimed.
+- No-key deterministic agent/MCP/UI tests explicitly removed Gemini/Groq keys.
+  Local operation still needs FalkorDB, installed packages and the Docker image.
+
+### Remaining limitations / submission blockers
+
+**Owner-recorded working demo video: NOT COMPLETE.** This undeployed submission
+is not marked submission-ready. Follow the [manual checklist](video-checklist.md).
+New trace screenshots and manual narrow/wide visual checks are also pending;
+the five existing images are genuine **2026-10-16 pre-MCP** desktop captures.
+No remote CI result is claimed. Fresh virtual environment is not a brand-new Mac.
+
+MCP stdio is trusted local single-operator transport, not a publicly authenticated
+service. A third-party host must enforce human consent itself. Worker deadlines
+do not forcibly kill Python threads; the busy gate refuses overlapping work.
+Tool outputs are capped at 120 KB and 100 paths (default60); incomplete results
+warn or fail closed. Calls use separate reads, not one transactional incident
+snapshot. Native evidence/snapshot checks reject observed node/edge drift for
+operational scoring; this cannot guarantee consistency across multiple tools.
+
+Regional paths join native deployment/dependency retrieval in Python. Regional
+risk reuses the existing snapshot-based worst-case component envelope. NetworkX
+metrics, deterministic intent routing and fictional simulation are explicitly
+not database execution or autonomous real-world remediation.
+
+### Reviewer assessment (self-score, not an official judge result)
+
+| Category | Score | Repository evidence / actually tested | Inspected limits / missing for full marks |
+|---|---:|---|---|
+| Problem importance | 9/10 | `README.md`, five fictional outage scenarios execute | No operator study or real telemetry validation |
+| Graph necessity | 14/15 | `native_queries.py`, live customer paths and reference parity | SQL recursion remains possible; no comparative operator study |
+| FalkorDB depth | 14/15 | Native Cypher, bounded paths, index/seed/parity and injection tests | Small54-node fixture; no production-scale validation |
+| Multi-hop reasoning | 10/10 | Native three-plus-hop customer evidence, direction/cycle tests | Completeness is limited by declared budgets, not universal reachability |
+| Algorithms as tools | 9/10 | `tooling.py`, `analytics.py`, structural/risk tool tests | No scale or sensitivity validation of heuristic weights |
+| MCP / tool selection | 8/10 | `mcp_server.py`, `agent.py`; real stdio/discovery, adaptive tests | Rule-based intent router; external host interoperability not manually inspected |
+| Graph-driven actions | 8/10 | Six gates, confirmation, no-write test, before/after simulation | Fictional readiness/capability assumptions; no real recovery claim |
+| Grounding / explainability | 9/10 | Strict claim catalog, provider mocks, paths and visible trace | Real provider success pending; prompts cannot prove a causal root |
+| Implementation | 5/5 | Modular service/UI boundary; lint/types/schema/security checks | Local hackathon scope, not a production certification |
+| Reliability / testing | 4/5 | Full live coverage suite, five UI scenarios, no-key operation | Manual viewports, video and remote CI pending |
+| **Total** | **90/100** | Technical Track01 fit demonstrated locally | **Video still blocks submission readiness** |
+
+### Reproduce (macOS / zsh, activated environment)
+
+```zsh
+python -m pip install -r requirements-dev.txt
+docker compose config --quiet
+docker compose up -d --wait
+python -m src.seed
+python -m src.seed --validate
+python -m src.health
+python -m src.agent --component 'Token Vault' --depth 6
+python -m src.agent --component 'Orders Database' --depth 6 --json
+env -u GEMINI_API_KEY -u GROQ_API_KEY LLM_PROVIDER=deterministic FALKORDB_INTEGRATION=1 python -m pytest -q
+ruff check .
+ruff format --check .
+python -m compileall -q src tests scripts app.py
+bandit -r src scripts -q
+python -m pip check
+python scripts/check_secrets.py --history
+pip-audit --cache-dir .audit-cache --progress-spinner off
+python -m streamlit run app.py
+```
+
+Provider calls are manual opt-in and consume quota; the test suite mocks them.
+See [MCP setup](mcp-tooling.md), [trace](agent-tool-trace.md) and
+[action gates](graph-gated-actions.md). Do not reset a valuable graph.
+
+## Historical technical / online-demo verification (pre-MCP)
 
 2026-10-16, baseline b5073a2; existing environment (not a new clean-room install).
 Only UI orchestration, README, screenshot/validation/audit records and UI tests

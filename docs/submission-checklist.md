@@ -2,6 +2,10 @@
 
 ## Verified locally
 
+Current MCP-enabled results supersede historical baseline counts below; see the
+dated [validation record](final-validation.md). Prior screenshots do not show
+the new trace. **The owner-recorded working video is still incomplete.**
+
 - [x] Required improvement branch created; logical local commits retained.
 - [x] Parallel-edge and native/cache consistency regressions fixed.
 - [x] Native FalkorDB incident/customer paths and reference parity exercised.
@@ -20,7 +24,7 @@
 - [ ] Check current official hackathon rules/deadline/track requirements manually.
 - [ ] Complete narrow-layout visual checks below; inspect any new capture for secrets.
 - [ ] Rehearse/record the three-minute script with an actual timer.
-- [ ] Add a real recording link only if required by the submission; existing screenshots are linked in README.
+- [ ] Record the working demo and add a judge-accessible link: required for this undeployed project. Follow [video checklist](video-checklist.md); screenshots are not a substitute.
 - [ ] If cloud success is desired, repair credentials privately and authorize a new check; the previous Groq attempt failed authentication.
 - [ ] If a provider fails, retain the honest deterministic fallback demonstration.
 - [ ] Review commits and run the final commands on the intended submission checkout.
