@@ -17,9 +17,9 @@ def test_run_demo_and_mitigation_shortcuts(topology):
         app = AppTest.from_file(str(app_path), default_timeout=30).run()
         assert not app.exception
         buttons = {item.label: item for item in app.button}
-        assert "Run Token Vault Demo" in buttons
+        assert "Run Token Vault Agent" in buttons
         with patch("src.reports.generate") as provider:
-            buttons["Run Token Vault Demo"].click().run()
+            buttons["Run Token Vault Agent"].click().run()
         provider.assert_not_called()
         assert not app.exception
         assert app.session_state["result_bundle"].analysis.risk.severity == "Critical"
@@ -29,24 +29,8 @@ def test_run_demo_and_mitigation_shortcuts(topology):
         )
         assert receipt.proto.expanded
         buttons = {item.label: item for item in app.button}
-        assert "Simulate Mitigation" in buttons
-        buttons["Simulate Mitigation"].click().run()
-        assert not app.exception
-        assert app.session_state["workspace"] == "Cascade simulation"
-        run = app.session_state["sim_run"]
-        mitigation = app.session_state["sim_mitigation"]
-        assert run.config.component_id == "vault"
-        assert mitigation.risk_reduction > 0
-        assert mitigation.after.risk.score < run.peak.risk.score
-        assert mitigation.removed_critical_paths
-        assert app.session_state["sim_cursor"] == len(run.frames)
-        original = mitigation.model_dump_json()
-        app.run()
-        assert not app.exception
-        assert app.session_state["sim_mitigation"].model_dump_json() == original
-        app.button(key="sim_reset").click().run()
-        assert app.session_state["sim_cursor"] == 0
-        assert "sim_mitigation" not in app.session_state
+        assert "Simulate Recommended Mitigation" in buttons
+        assert app.button(key="open_mitigation").disabled
 
 
 @pytest.mark.skipif(
@@ -66,7 +50,10 @@ def test_live_three_click_flow_uses_native_evidence_without_provider():
         assert next(
             item for item in app.expander if item.label == "Executed Cypher and safe query receipts"
         ).proto.expanded
+        assert len(app.session_state["result_agent"].trace) == 7
+        assert app.button(key="open_mitigation").disabled
+        app.checkbox(key="result_action_confirm").check().run()
         app.button(key="open_mitigation").click().run()
     assert not app.exception
-    assert app.session_state["sim_mitigation"].risk_reduction > 0
+    assert app.session_state["result_agent"].trace[-1].output.simulation.risk_reduction > 0
     provider.assert_not_called()

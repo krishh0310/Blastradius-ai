@@ -112,23 +112,14 @@ def run_demo() -> None:
         use_provider=False,
         run_demo_requested=True,
         result_show_receipts=False,
+        result_action_confirm=False,
     )
     apply_scenario()
 
 
 def open_mitigation() -> None:
-    """Request a fictional comparison; the simulator owns all graph logic."""
-    st.session_state.update(
-        workspace="Cascade simulation",
-        sim_component=st.session_state.get("component", "vault"),
-        sim_playing=False,
-        sim_preview_requested=True,
-        sim_status="down",
-        sim_optional="degrade",
-        sim_auto=True,
-        sim_depth=8,
-        sim_action="Isolate unhealthy dependency",
-    )
+    """The consent checkbox authorizes only the displayed agent recommendation."""
+    st.session_state["result_simulate_requested"] = True
 
 
 def table(rows: list[dict], message: str = "No graph evidence in this category.") -> None:
@@ -816,19 +807,45 @@ def main() -> None:
             f"Provider: {settings.llm_provider}; fallback "
             f"{'enabled' if settings.llm_fallback_enabled else 'disabled'}."
         )
-    submitted = st.sidebar.button("Investigate", type="primary", width="stretch", key="investigate")
+    submitted = st.sidebar.button(
+        "Investigate",
+        type="primary",
+        width="stretch",
+        key="investigate",
+        on_click=lambda: st.session_state.update(result_action_confirm=False),
+    )
     st.sidebar.button("Reset", on_click=reset_session, width="stretch", key="reset")
     st.sidebar.caption("Reset clears this workspace, not the database.")
     demo, evidence, simulate = st.columns(3)
-    demo.button("Run Token Vault Demo", key="run_demo", on_click=run_demo, width="stretch")
+    demo.button("Run Token Vault Agent", key="run_demo", on_click=run_demo, width="stretch")
     evidence.button(
         "View FalkorDB Evidence",
         key="view_evidence",
         width="stretch",
         on_click=lambda: st.session_state.update(result_show_receipts=True),
     )
+    agent = st.session_state.get("result_agent")
+    request = st.session_state.get("result_agent_request")
+    current_controls = (st.session_state["component"], depth, st.session_state["assumed_status"])
+    action_available = bool(
+        agent
+        and request
+        and agent.recommendation
+        and agent.recommendation.eligible
+        and len(agent.trace) < request.max_calls
+        and st.session_state.get("result_controls") == current_controls
+    )
     simulate.button(
-        "Simulate Mitigation", key="open_mitigation", on_click=open_mitigation, width="stretch"
+        "Simulate Recommended Mitigation",
+        key="open_mitigation",
+        on_click=open_mitigation,
+        width="stretch",
+        disabled=not (action_available and st.session_state.get("result_action_confirm", False)),
+    )
+    st.checkbox(
+        "I confirm the recommended in-memory fictional mitigation (no real infrastructure action)",
+        key="result_action_confirm",
+        disabled=not action_available,
     )
     submitted = submitted or st.session_state.pop("run_demo_requested", False)
     st.caption("Token Vault demo reporting: deterministic; no API key or cloud call required.")
@@ -854,6 +871,11 @@ def main() -> None:
         return
     if submitted:
         try:
+            from src.agent import AgentRequest
+            from src.agent_ui import run_request
+
+            st.session_state.pop("result_agent", None)
+            st.session_state.pop("result_agent_request", None)
             with st.status("Investigating graph evidence…", expanded=True) as status_box:
                 for key in list(st.session_state):
                     if key.startswith(("viz_", "path_", "why_")):
@@ -869,6 +891,15 @@ def main() -> None:
                     use_native=True,
                 )
                 st.session_state["result_bundle"] = bundle
+                request = AgentRequest(
+                    component=st.session_state["component"],
+                    depth=depth,
+                    status=st.session_state["assumed_status"],
+                    incident=st.session_state["incident_text"],
+                )
+                st.write("Select bounded tools through the local MCP server…")
+                st.session_state["result_agent"] = run_request(request, settings)
+                st.session_state["result_agent_request"] = request
                 st.session_state["result_origin"] = origin
                 st.session_state["result_snapshot"] = snapshot_json
                 st.session_state["result_snapshot_time"] = snapshot_time
@@ -880,6 +911,7 @@ def main() -> None:
                 status_box.update(
                     label="Graph investigation complete", state="complete", expanded=False
                 )
+            st.rerun()
         except Exception:
             st.session_state.pop("result_bundle", None)
             st.error(
@@ -888,6 +920,17 @@ def main() -> None:
             )
             return
     bundle = st.session_state.get("result_bundle")
+    from src.agent_ui import render_agent, simulate_request
+
+    agent = st.session_state.get("result_agent")
+    if st.session_state.pop("result_simulate_requested", False) and action_available:
+        if st.session_state.get("result_action_confirm", False):
+            with st.spinner("Recheck graph gate and simulate fictional mitigation through MCP…"):
+                agent = simulate_request(agent, request, settings)
+                st.session_state["result_agent"] = agent
+            st.rerun()
+    if agent:
+        render_agent(agent)
     if bundle is None:
         st.html(
             '<section class="br-empty"><h2>See the outage before it spreads.</h2>'
