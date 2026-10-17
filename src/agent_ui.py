@@ -31,6 +31,7 @@ def render_agent(result: AgentResult) -> None:
                     "Order": step.order,
                     "Tool": step.tool,
                     "Why selected": step.reason,
+                    "Selected by": step.selector,
                     "Elapsed ms": round(step.output.duration_ms, 2),
                     "Evidence IDs": len(step.output.evidence_ids),
                     "Supporting paths": len(step.output.paths),
@@ -44,6 +45,7 @@ def render_agent(result: AgentResult) -> None:
     for step in result.trace:
         with st.expander(f"Tool {step.order}: {step.tool} — evidence and query timing"):
             st.write(step.reason)
+            st.caption(f"Selected by: {step.selector}; planning: {step.planning_ms:.2f} ms")
             st.json(step.inputs)
             st.caption(f"Reasoning engine: {step.output.reasoning_engine}")
             st.json(step.output.model_dump(mode="json"))

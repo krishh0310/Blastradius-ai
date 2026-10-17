@@ -1,5 +1,117 @@
 # Final clean-room validation
 
+## Submission-gap verification — 2026-10-17
+
+Read-only GitHub API checks found a successful remote run for the current committed
+revision `3fbdecc449c3af60285967b674d284ae9cba80fc`:
+[Quality and security #5](https://github.com/krishh0310/Blastradius-ai/actions/runs/39009982121),
+completed successfully at 06:29:22 UTC on October 17, 2026. The quality job passed
+all steps, including installation, Ruff, formatting, compileall, pytest, Bandit,
+reachable-history secret scanning and pip check. The optional FalkorDB integration
+job was **skipped**. No remote success is claimed for uncommitted README changes
+or subsequent local code. No push or workflow dispatch was performed.
+
+One newly authorized, bounded Groq attempt using the existing environment key
+again returned **authentication failure**, model `llama-3.3-70b-versatile`.
+Cross-provider switching was disabled. Actual report provider was deterministic;
+its grounding validation returned zero errors. No key or provider body was saved.
+Live cloud-generation success still requires valid credentials; no further
+provider attempt is authorized by this record.
+
+Direct capture remains unavailable (no connected computer-use browser). The owner
+subsequently supplied genuine current screenshots in chat: eight completed MCP
+tools with consent, Token Vault 91.62 and six customers, plus three-panel fictional
+mitigation 91.62 → 42.62. No obvious credential is visible in the reviewed images.
+The final trace consistently selects Token Vault at depth eight. Original PNGs
+are not accessible as local files and have not been imported; existing linked
+captures remain pre-MCP. No reconstruction or fabricated screenshot is used.
+
+Approved local improvements are now implemented: at most three provider planning
+decisions using bounded typed graph context, with strict name-only choices and
+stop-on-first-error deterministic fallback; per-tool selector and planning timing;
+independent UI/CLI opt-in; unchanged seven-call deterministic demo and eighth
+consent-gated simulation. Live model planning is not verified. All provider tests
+are mocked; no additional provider call was made.
+
+The separate twenty-tenant benchmark seeded and validated **1,083 nodes / 2,842
+relationships**. Both native/reference affected-ID sets matched, including 300
+components for the shared root, without traversal warnings. Its disposable graph
+was removed. See [actual measurements](benchmark.md#synthetic-multi-tenant-follow-up--2026-10-17).
+
+Full local live suite after these changes: **234 passed, zero skipped; 89.58%
+statement coverage**, 45.25 seconds. This is not a new clean-machine test or a new
+remote CI result. No dependency added, no production-scale claim, no deployment.
+
+Ruff lint and formatting (68 Python files), compileall, Bandit, `pip check`,
+diff whitespace checks and source/reachable-history secret scan passed (zero
+findings). `pip-audit` reported **no known vulnerabilities** for the installed
+environment; that is advisory coverage, not a guarantee of vulnerability absence.
+All **81 local links/anchors across 14 Markdown files** resolved. Health check
+passed; live demo validation still reports **54 nodes / 141 relationships**, no
+integrity errors, and the intentional analytics/notification cycle. Docker is
+healthy with loopback-only ports; the existing Streamlit server on port 8529
+returned health `ok`. No service restart, fresh install or real infrastructure
+action was performed. Original screenshot lookup found no accessible current PNG
+in the usual screenshot folders; Downloads access was denied, so it was not bypassed.
+
+### Local follow-up files and commands
+
+Created: `src/scale.py`, `scripts/scale_benchmark.py`, `tests/test_scale.py`.
+Modified: `src/agent.py`, `src/agent_ui.py`, `src/dashboard_ui.py`,
+`tests/test_agent.py`, `tests/test_agent_ui.py`, `README.md`,
+`docs/agent-tool-trace.md`, `docs/benchmark.md`, `docs/final-validation.md`,
+`docs/submission-checklist.md`. The existing README rewrite was preserved.
+No topology, dependency, configuration, existing screenshot or license was removed.
+
+Run from the repository root in the existing Python 3.12 environment:
+
+```zsh
+source .venv/bin/activate
+python -m src.health
+python -m src.seed --validate
+env -u GEMINI_API_KEY -u GROQ_API_KEY LLM_PROVIDER=deterministic FALKORDB_INTEGRATION=1 python -m pytest -q -o 'addopts=--cov=src --cov-report=term-missing --cov-fail-under=80'
+python -m scripts.scale_benchmark --tenants 20 --iterations 5 --warmup 1
+ruff check .
+ruff format --check .
+python -m compileall -q src tests scripts app.py
+bandit -r src scripts -q
+python -m pip check
+python scripts/check_secrets.py --history
+pip-audit --cache-dir .audit-cache --progress-spinner off
+# The existing app is already healthy on this port; start only if not running.
+streamlit run app.py --server.address 127.0.0.1 --server.port 8529
+```
+
+One fresh-context read-only review found no critical/important defects and one
+deferred minor: SDK graph-deletion failure can escape the benchmark CLI error
+handler and mask the original benchmark failure. Forced termination or failed
+cleanup can leave a uniquely named `scale_test_` graph; the configured demo graph
+is never its deletion target. Review also checked 256 planner choice/budget/intent
+combinations. The reviewer did not independently repeat live/network checks.
+Work remains uncommitted on local branch `feat/submission-proof`; no merge,
+push, workflow dispatch or deployment was performed.
+
+### Manual remote CI commands
+
+Everything remains local. The following commands do not push; use dispatch only
+after you independently approve, commit and push the intended branch. Check the
+exact source SHA rather than assuming an older green run covers current files.
+GitHub CLI authentication must already be configured by the owner.
+
+```zsh
+task_ci_sha=$(git rev-parse HEAD)
+task_ci_branch=$(git branch --show-current)
+gh run list --repo krishh0310/Blastradius-ai --workflow quality.yml --commit "$task_ci_sha"
+# MANUAL ONLY: requires that this exact branch and commit already exist remotely.
+gh workflow run quality.yml --repo krishh0310/Blastradius-ai --ref "$task_ci_branch" -f integration=true
+gh run list --repo krishh0310/Blastradius-ai --workflow quality.yml --commit "$task_ci_sha"
+# Replace 123456789 with the new run ID printed above, not the historical run.
+gh run watch 123456789 --repo krishh0310/Blastradius-ai --exit-status
+```
+
+Confirm the run head SHA equals `task_ci_sha` and both quality and integration
+jobs pass. No workflow was dispatched in this local follow-up.
+
 ## Official-reference selective review — 2026-10-17
 
 Latest full live suite after adopting the installed official client's read-only

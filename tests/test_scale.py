@@ -1,0 +1,73 @@
+"""Synthetic tenants preserve the judge fixture and remain inside graph bounds."""
+
+import os
+from unittest.mock import patch
+
+import pytest
+
+from src.graph_queries import GraphQueries
+from src.seed import load_topology
+from src.topology import integrity
+
+
+def test_scale_topology_is_deterministic_connected_and_cross_tenant():
+    from src.scale import build_scale_topology
+
+    original = load_topology().model_dump_json()
+    topology = build_scale_topology()
+    assert len(topology.nodes) == 1083
+    assert len(topology.relationships) == 2842
+    assert not integrity(topology)["errors"]
+    assert topology == build_scale_topology()
+    assert load_topology().model_dump_json() == original
+    graph = GraphQueries(topology)
+    impacts = graph.blast_radius("shared-secrets")
+    ids = {impact.component.id for impact in impacts}
+    assert {"tenant01-vault", "tenant20-vault", "tenant02-payment"} <= ids
+    assert all(impact.path.hops > 0 for impact in impacts)
+
+
+def test_benchmark_validates_before_opening_database():
+    from scripts.scale_benchmark import run
+
+    with patch(
+        "scripts.scale_benchmark.DatabaseManager", side_effect=AssertionError("Must not connect")
+    ):
+        for kwargs in ({"tenants": 31}, {"iterations": 2}, {"warmup": 6}):
+            with pytest.raises(ValueError):
+                run(**kwargs)
+
+
+@pytest.mark.skipif(os.environ.get("FALKORDB_INTEGRATION") != "1", reason="Requires local FalkorDB")
+def test_live_scale_seed_parity_and_disposable_cleanup():
+    from scripts.scale_benchmark import run
+    from src.config import Settings
+    from src.database import DatabaseManager
+
+    with DatabaseManager(Settings.from_env()) as db:
+        db.connect()
+        existing = set(db._client.list_graphs())
+    result = run(tenants=2, iterations=3, warmup=0)
+    assert result["nodes"] == 111 and result["relationships"] == 286
+    assert result["cleanup_completed"]
+    assert all(item["same_affected_ids"] for item in result["queries"].values())
+    with DatabaseManager(Settings.from_env()) as db:
+        db.connect()
+        assert set(db._client.list_graphs()) == existing
+
+
+@pytest.mark.parametrize("tenants", [0, 31, True, "20", 1.5])
+def test_invalid_scale_size_rejected(tenants):
+    from src.scale import build_scale_topology
+
+    with pytest.raises(ValueError):
+        build_scale_topology(tenants)
+
+
+def test_scale_maximum_within_existing_snapshot_limits():
+    from src.scale import build_scale_topology
+
+    topology = build_scale_topology(30)
+    assert len(topology.nodes) == 1623
+    assert len(topology.relationships) < 10000
+    assert not integrity(topology)["errors"]

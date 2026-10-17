@@ -31,9 +31,29 @@ may consume that budget; start a focused investigation instead of bypassing it.
 
 Optional constrained provider selection can choose only among the next safe
 tool names; the model cannot provide arguments, Cypher, code or authorization.
-The dashboard demonstration uses deterministic planning. The existing report
-provider opt-in is independent. Unknown components, provider errors and database
-errors remain visible rather than fabricating evidence.
+The one-click demonstration uses deterministic planning. Independently opt in with
+**Use configured LLM for tool selection**, or use:
+
+```zsh
+python -m src.agent --component "Token Vault" --depth 8 --use-provider --json
+```
+
+At most three provider calls select direction, business-impact evidence and
+structural/risk evidence. Each decision receives a bounded typed summary of
+observed graph facts: matched ID/type/status/criticality, intent flags,
+path/evidence counts, warning presence and remaining budget. Raw incident prose,
+graph descriptions, tool arguments and credentials are not sent to the planner.
+Lookup and deployment inspection remain mandatory; owner/runbook evidence cannot
+be skipped for a recommendation. Invalid choices or provider failures stop further
+provider attempts and use the deterministic policy. A later failure retains an
+honest hybrid planner label. Each trace identifies the actual selector and planning
+latency separately from tool execution. This is bounded selection, not unrestricted
+autonomous planning. Longer selections can exhaust all eight calls, leaving no
+room for simulation; the budget is never expanded.
+
+The report-provider opt-in is separate. Unknown components, provider errors and
+database errors remain visible rather than fabricating evidence. Tests mock every
+provider call; live provider planning is not claimed verified.
 
 Completed results are session state, not secret-bearing shared caches. Changing
 controls requires a new investigation; mitigation is disabled for stale controls.

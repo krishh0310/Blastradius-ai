@@ -1,5 +1,53 @@
 # Measured local graph benchmark
 
+## Synthetic multi-tenant follow-up — 2026-10-17
+
+The unchanged judge fixture remains 54 nodes / 141 relationships. The separate
+deterministic generator in `src/scale.py` clones twenty tenants and connects their
+Token Vaults to a required shared secrets service with its own team/runbook:
+**1,083 nodes / 2,842 relationships**. All structural validation passed. The new
+CLI seeds only a generated `scale_test_UUID` graph, performs read-only queries,
+and removes that same disposable graph in `finally`. It accepts no graph-name
+argument; it never resets the configured demo graph. If the process is forcibly
+killed or the server is unavailable during cleanup, a disposable graph can remain.
+
+```zsh
+python -m scripts.scale_benchmark --tenants 20 --iterations 5 --warmup 1
+```
+
+Measured locally on Python 3.12.14/macOS arm64: five measured iterations after one
+warm-up, nearest-rank p95. Seed/validation took 1,471.513 ms. Depth six, max 500
+paths, snapshot ceiling 2,000 nodes / 10,000 relationships. Native/reference
+affected-ID sets matched for both roots, with no traversal warnings; this is not
+proof that every alternate route was enumerated. Disposable cleanup completed.
+
+| Operation | Returned components | Median ms | p95 ms |
+|---|---:|---:|---:|
+| Snapshot retrieval and validation | — | 107.757 | 112.333 |
+| Tenant 01 Vault, native | 15 | 4.242 | 4.447 |
+| Tenant 01 Vault, cached Python | 15 | 0.034 | 0.040 |
+| Shared secrets, native | 300 | 121.158 | 122.038 |
+| Shared secrets, cached Python | 300 | 0.821 | 0.896 |
+
+Raw measured samples (ms), in execution order:
+
+```json
+{
+  "snapshot": [112.333, 100.239, 107.757, 108.323, 105.267],
+  "tenant_native": [4.295, 4.108, 4.240, 4.242, 4.447],
+  "tenant_cached_python": [0.040, 0.034, 0.033, 0.037, 0.033],
+  "shared_native": [121.639, 112.853, 121.158, 122.038, 117.202],
+  "shared_cached_python": [0.803, 0.821, 0.813, 0.896, 0.821]
+}
+```
+
+Repeated fictional tenants are not a production workload. Native timings include
+database round-trips and typed decoding; cached Python timings exclude snapshot
+download/construction (reported separately). No throughput, concurrent load,
+server expansion count, whole-graph analytics, LLM or UI latency is measured.
+This is an honest larger-graph exercise, not evidence that FalkorDB beats Python
+or SQL, or that the complete dashboard is validated at production scale.
+
 ## Native versus Python follow-up
 
 Executed 2026-10-16 on the same local Python/macOS environment and fictional

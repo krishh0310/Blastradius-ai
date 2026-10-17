@@ -3,8 +3,9 @@
 ## Verified locally
 
 Current MCP-enabled results supersede historical baseline counts below; see the
-dated [validation record](final-validation.md). Prior screenshots do not show
-the new trace. **The owner-recorded working video is still incomplete.**
+dated [validation record](final-validation.md). The owner supplied current trace
+and mitigation captures in chat; original files still need importing into assets.
+**The owner-recorded working video is still incomplete.**
 
 - [x] Required improvement branch created; logical local commits retained.
 - [x] Parallel-edge and native/cache consistency regressions fixed.
@@ -17,12 +18,16 @@ the new trace. **The owner-recorded working video is still incomplete.**
 - [x] Streamlit started and health returned HTTP 200; automated UI scenarios passed.
 - [x] Fictional-data and heuristic/causality/replica caveats documented.
 - [x] MIT license preserved; no deployment, publication or visibility change performed.
+- [x] Twenty-tenant synthetic graph exercised: 1,083 nodes / 2,842 relationships; disposable graph removed.
+- [x] Multi-step bounded planner and failure fallback verified with mocked providers.
+- [x] Remote quality run #5 passed on `3fbdecc`; remote integration skipped, subsequent local changes not covered.
 
 ## Owner actions before submission
 
 - [ ] Confirm team name, contributors, roles and any eligibility requirements.
 - [ ] Check current official hackathon rules/deadline/track requirements manually.
 - [ ] Complete narrow-layout visual checks below; inspect any new capture for secrets.
+- [ ] Save the original current captures into assets and link them; chat-only screenshots are not repository assets.
 - [ ] Rehearse/record the three-minute script with an actual timer.
 - [ ] Record the working demo and add a judge-accessible link: required for this undeployed project. Follow [video checklist](video-checklist.md); screenshots are not a substitute.
 - [ ] If cloud success is desired, repair credentials privately and authorize a new check; the previous Groq attempt failed authentication.
@@ -59,3 +64,14 @@ scrolling tables/graph, visible focus, readable legend, empty/single-node/filter
 states. Automated AppTest covers behavior but not pixel appearance.
 Store only genuine inspected PNG/WebP captures in assets/, link with descriptive
 captions/alt text, and keep credentials, account panels and unrelated tabs out.
+
+On October 17 the owner supplied genuine current screenshots for visual review:
+Token Vault MCP eight-tool trace with checked consent and completed fictional
+simulation; Critical 91.62, six customers and the three-hop Atlas path; and
+three-panel simulation comparison 21.62 baseline / 91.62 peak / 42.62 after,
+22 → 4 affected entities and 18 critical paths no longer active. These were
+reviewed in chat, not imported into this checkout. Save the original captures as
+`assets/mcp-agent-trace.png`, `assets/token-vault-risk.png` and
+`assets/mitigation-comparison.png` before adding links. No fake file references
+or reconstructed screenshots are used. Expanded Tool 3 evidence and narrow layout
+remain uncaptured. The shown planner is deterministic, not cloud-provider proof.

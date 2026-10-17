@@ -30,11 +30,14 @@ def test_agent_trace_and_confirmed_simulation(topology, graph):
     ):
         app = AppTest.from_file(str(Path(__file__).parents[1] / "app.py"), default_timeout=40).run()
         assert app.button(key="open_mitigation").disabled
+        app.checkbox(key="use_planner").check().run()
         app.button(key="run_demo").click().run()
         assert not app.exception
         assert any(item.value == "Agent Tool Trace" for item in app.subheader)
         result = app.session_state["result_agent"]
         assert app.session_state["depth"] == 8
+        assert not app.session_state["use_planner"]
+        assert not app.session_state["result_agent_request"].use_provider
         assert len(result.trace) == 7 and result.recommendation.eligible
         assert app.button(key="open_mitigation").disabled
         app.checkbox(key="result_action_confirm").check().run()

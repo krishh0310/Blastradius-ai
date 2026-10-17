@@ -101,6 +101,7 @@ def reset_session() -> None:
     apply_scenario()
     st.session_state["depth"] = 6
     st.session_state["use_provider"] = False
+    st.session_state["use_planner"] = False
     st.session_state["workspace"] = "Investigation"
 
 
@@ -110,6 +111,7 @@ def run_demo() -> None:
         scenario="Token Vault timeout",
         depth=8,
         use_provider=False,
+        use_planner=False,
         run_demo_requested=True,
         result_show_receipts=False,
         result_action_confirm=False,
@@ -802,7 +804,13 @@ def main() -> None:
         help="On Investigate only: send graph evidence to the configured provider. "
         "Otherwise use a deterministic template.",
     )
-    if use_provider:
+    use_planner = st.sidebar.checkbox(
+        "Use configured LLM for tool selection",
+        key="use_planner",
+        help="Opt in to at most three planning calls using bounded graph context. "
+        "Tool arguments and human-consent gates remain deterministic. No incident prose is sent.",
+    )
+    if use_provider or use_planner:
         st.sidebar.caption(
             f"Provider: {settings.llm_provider}; fallback "
             f"{'enabled' if settings.llm_fallback_enabled else 'disabled'}."
@@ -896,6 +904,7 @@ def main() -> None:
                     depth=depth,
                     status=st.session_state["assumed_status"],
                     incident=st.session_state["incident_text"],
+                    use_provider=use_planner,
                 )
                 st.write("Select bounded tools through the local MCP server…")
                 st.session_state["result_agent"] = run_request(request, settings)

@@ -102,7 +102,14 @@ def test_provider_failure_and_valid_selection(graph):
             )
         )
     assert failed.planner == "deterministic fallback"
-    with patch("src.agent.generate", return_value='{"tool":"calculate_risk"}'):
+    with patch(
+        "src.agent.generate",
+        side_effect=[
+            '{"tool":"trace_downstream_blast_radius"}',
+            '{"tool":"find_customer_impact"}',
+            '{"tool":"calculate_risk"}',
+        ],
+    ):
         selected = asyncio.run(
             run_agent(
                 AgentRequest(component="vault", use_provider=True),
@@ -115,6 +122,65 @@ def test_provider_failure_and_valid_selection(graph):
     assert all(
         set(step.inputs) == {"component", "depth", "max_paths", "status"} for step in selected.trace
     )
+
+
+def test_multistep_planner_receives_bounded_evidence_not_untrusted_text(graph):
+    import json
+
+    from src.agent import AgentRequest, run_agent
+
+    settings = Settings(llm_provider="groq", groq_api_key="secret-test-key")
+    prompts = []
+
+    def choose(provider, config, system, prompt, schema):
+        context = json.loads(prompt)
+        prompts.append(context)
+        assert "INJECT_ME" not in prompt and "secret-test-key" not in prompt
+        assert len(prompt) < 6000
+        return json.dumps({"tool": context["allowed_tools"][0]})
+
+    with patch("src.agent.generate", side_effect=choose):
+        result = asyncio.run(
+            run_agent(
+                AgentRequest(
+                    component="vault", incident="INJECT_ME customers affected", use_provider=True
+                ),
+                ToolService(settings, queries=graph).execute,
+                settings=settings,
+            )
+        )
+    assert len(prompts) == 3
+    assert prompts[0]["component"]["id"] == "vault"
+    assert prompts[1]["observed_paths"] > 0
+    assert len(result.trace) == 7 and result.recommendation.eligible
+    assert sum(step.selector == "groq" for step in result.trace) == 3
+    assert all(step.planning_ms >= 0 for step in result.trace)
+
+
+def test_invalid_second_choice_stops_provider_and_labels_hybrid_fallback(graph):
+    from src.agent import AgentRequest, run_agent
+
+    settings = Settings(llm_provider="groq", groq_api_key="mock")
+    with patch(
+        "src.agent.generate",
+        side_effect=[
+            '{"tool":"trace_downstream_blast_radius"}',
+            "not json",
+            AssertionError("Provider must not be retried after failure"),
+        ],
+    ):
+        result = asyncio.run(
+            run_agent(
+                AgentRequest(component="vault", use_provider=True),
+                ToolService(settings, queries=graph).execute,
+                settings=settings,
+            )
+        )
+    assert "deterministic fallback" in result.planner
+    assert "groq" in result.planner
+    assert len(result.trace) == 7 and result.recommendation.eligible
+    assert result.trace[2].selector == "groq"
+    assert result.trace[3].selector == "deterministic policy"
 
 
 def test_actual_mcp_agent_and_argument_validation(graph):
