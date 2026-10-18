@@ -383,7 +383,7 @@ needs no provider key, model download or internet connection.
 
 ## Testing and verification
 
-Recorded local verification on **October 17, 2026**: **234 tests passed, zero
+Recorded local verification on **October 17, 2026**: **238 tests passed, zero
 skipped, 89.58% statement coverage**. This includes native FalkorDB parity,
 real MCP transport, all five dashboard scenarios, simulation and mocked provider
 adapters. This is a local result, not a remote CI badge.

@@ -14,6 +14,14 @@ from src.scale import build_scale_topology
 from src.seed import seed
 
 
+class BenchmarkError(DatabaseError):
+    """Sanitized failure report, retaining cleanup status without SDK details."""
+
+    def __init__(self, report: dict) -> None:
+        self.report = report
+        super().__init__("Scale benchmark failed; inspect the sanitized report")
+
+
 def run(tenants: int = 20, iterations: int = 5, warmup: int = 1) -> dict:
     """Never select the configured graph for writes; remove only this run's UUID graph."""
     topology = build_scale_topology(tenants)
@@ -31,6 +39,9 @@ def run(tenants: int = 20, iterations: int = 5, warmup: int = 1) -> dict:
         "iterations": iterations,
         "warmup": warmup,
         "queries": {},
+        "graph": owned_name,
+        "warnings": [],
+        "cleanup_attempts": 0,
         "cleanup_completed": False,
     }
     with DatabaseManager(settings) as writer:
@@ -79,9 +90,26 @@ def run(tenants: int = 20, iterations: int = 5, warmup: int = 1) -> dict:
             result["scope"] = (
                 "Synthetic repeated tenants, not production scale. Native timings include round-trips; cached Python excludes snapshot retrieval. Returned parity is not a server-expansion or load-test guarantee. No provider calls or UI rendering."
             )
+        except Exception:
+            result["error"] = "benchmark_failed"
         finally:
-            writer.connect().delete()
-            result["cleanup_completed"] = True
+            for attempt in range(1, 4):
+                result["cleanup_attempts"] = attempt
+                try:
+                    writer.connect().delete()
+                except Exception:
+                    result["cleanup_completed"] = False
+                else:
+                    result["cleanup_completed"] = True
+                    break
+            if not result["cleanup_completed"]:
+                result.setdefault("error", "cleanup_failed")
+                result["warnings"].append(
+                    "Cleanup could not be confirmed after three attempts. "
+                    "Only the disposable graph named in this report may require manual removal."
+                )
+    if "error" in result:
+        raise BenchmarkError(result) from None
     return result
 
 
@@ -94,6 +122,9 @@ def main() -> int:
     try:
         print(json.dumps(run(args.tenants, args.iterations, args.warmup), indent=2))
         return 0
+    except BenchmarkError as exc:
+        print(json.dumps(exc.report, indent=2))
+        return 1
     except (DatabaseError, ValueError):
         print("Scale benchmark unavailable; check local FalkorDB and bounded arguments.")
         return 1

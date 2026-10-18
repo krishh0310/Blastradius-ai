@@ -7,9 +7,13 @@ deterministic generator in `src/scale.py` clones twenty tenants and connects the
 Token Vaults to a required shared secrets service with its own team/runbook:
 **1,083 nodes / 2,842 relationships**. All structural validation passed. The new
 CLI seeds only a generated `scale_test_UUID` graph, performs read-only queries,
-and removes that same disposable graph in `finally`. It accepts no graph-name
-argument; it never resets the configured demo graph. If the process is forcibly
-killed or the server is unavailable during cleanup, a disposable graph can remain.
+and removes that same disposable graph in `finally`, with at most three cleanup
+attempts. It accepts no graph-name argument; it never resets the configured demo
+graph. Reports include the exact generated graph name, attempt count and cleanup
+status. A persistent cleanup failure produces sanitized JSON and a nonzero exit
+code without hiding the original benchmark failure. If the process is forcibly
+killed or the server remains unavailable, removal cannot be guaranteed; only the
+reported disposable graph may need manual removal after server recovery.
 
 ```zsh
 python -m scripts.scale_benchmark --tenants 20 --iterations 5 --warmup 1

@@ -1,7 +1,7 @@
 """Synthetic tenants preserve the judge fixture and remain inside graph bounds."""
 
 import os
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -71,3 +71,68 @@ def test_scale_maximum_within_existing_snapshot_limits():
     assert len(topology.nodes) == 1623
     assert len(topology.relationships) < 10000
     assert not integrity(topology)["errors"]
+
+
+@pytest.mark.parametrize(
+    "deletions, completed, attempts",
+    [
+        ([OSError("private SDK detail"), None], True, 2),
+        ([OSError("private SDK detail")] * 3, False, 3),
+    ],
+)
+def test_cleanup_retries_without_masking_original_failure(deletions, completed, attempts):
+    from scripts.scale_benchmark import BenchmarkError, run
+
+    database = MagicMock()
+    database.__enter__.return_value = database
+    database.connect.return_value.delete.side_effect = deletions
+    with (
+        patch("scripts.scale_benchmark.DatabaseManager", return_value=database),
+        patch("scripts.scale_benchmark.seed", side_effect=ValueError("private original failure")),
+        pytest.raises(BenchmarkError) as error,
+    ):
+        run(tenants=1, iterations=3, warmup=0)
+    report = error.value.report
+    assert report["error"] == "benchmark_failed"
+    assert report["cleanup_completed"] is completed
+    assert report["cleanup_attempts"] == attempts
+    assert report["graph"].startswith("scale_test_")
+    assert "private" not in str(error.value)
+    assert bool(report["warnings"]) is (not completed)
+
+
+@pytest.mark.parametrize("fails, exit_code", [(False, 0), (True, 1)])
+def test_cleanup_cli_reports_owned_graph_without_traceback(fails, exit_code, capsys):
+    import json
+
+    from scripts.scale_benchmark import main
+    from src.scale import build_scale_topology
+
+    graph = GraphQueries(build_scale_topology(1))
+    database = MagicMock()
+    database.__enter__.return_value = database
+    if fails:
+        database.connect.return_value.delete.side_effect = OSError("private deletion error")
+    with (
+        patch(
+            "sys.argv", ["scale_benchmark", "--tenants", "1", "--iterations", "3", "--warmup", "0"]
+        ),
+        patch("scripts.scale_benchmark.DatabaseManager", return_value=database) as connections,
+        patch(
+            "scripts.scale_benchmark.seed",
+            return_value={"nodes": 57, "relationships": 144, "errors": []},
+        ),
+        patch("scripts.scale_benchmark.GraphQueries.from_database", return_value=graph),
+        patch("scripts.scale_benchmark.NativeGraphQueries", return_value=graph),
+    ):
+        assert main() == exit_code
+    captured = capsys.readouterr()
+    report = json.loads(captured.out)
+    assert report["cleanup_completed"] is (not fails)
+    assert report["cleanup_attempts"] == (3 if fails else 1)
+    assert all(
+        call.args[0].falkordb_graph == report["graph"] for call in connections.call_args_list
+    )
+    assert "private" not in captured.out and not captured.err
+    if fails:
+        assert report["error"] == "cleanup_failed"

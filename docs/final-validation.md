@@ -1,5 +1,36 @@
 # Final clean-room validation
 
+## Cleanup reliability correction — 2026-10-17
+
+The previously deferred benchmark cleanup issue is corrected: at most three
+attempts, sanitized failure reporting with the exact owned disposable graph name,
+attempt count and status, nonzero CLI exit on incomplete cleanup, and retention
+of a primary benchmark failure instead of masking it with an SDK exception.
+Regression tests cover transient and persistent deletion failures, primary-error
+preservation and CLI success/failure JSON without private details or tracebacks.
+A live two-tenant benchmark validated 111 nodes / 286 relationships, matching
+native/reference affected IDs, and confirmed cleanup on its first attempt.
+Forced termination or persistent database unavailability can still leave a
+disposable graph; no application can guarantee deletion against an unreachable
+server. No arbitrary graph-name cleanup option was added.
+
+One newly authorized, ten-second Groq check using the existing environment key
+returned **authentication failure** again. Only a minimal connectivity prompt
+was sent, not graph data; the response body and key were not printed or stored.
+Gemini has no environment key; Ollama is not installed/running in this session.
+No provider success is claimed. Credential/permission repair requires the owner;
+see [private provider setup](setup.md#provider-setup). No key or active-provider
+configuration was changed, and no further provider call was made.
+
+Verification: **238 passed, zero skipped, 89.58% source coverage**, 48.46 seconds;
+Ruff lint/format (68 files), compileall, Bandit, source secret scan (zero findings),
+diff whitespace checks and all 83 local documentation links/anchors passed.
+FalkorDB was started only for integration verification and stopped afterward;
+Streamlit/Ollama were not started. Data and volumes were preserved. Changes:
+`scripts/scale_benchmark.py`, `tests/test_scale.py`, `docs/benchmark.md`,
+`docs/setup.md`, `docs/final-validation.md`, and the README verification count.
+No package, API key or provider-selection setting was changed; nothing was pushed.
+
 ## Submission-gap verification — 2026-10-17
 
 Read-only GitHub API checks found a successful remote run for the current committed

@@ -135,6 +135,29 @@ python -m src.reports --component "Token Vault" --status failed
 ```
 
 For Groq, use LLM_PROVIDER=groq and privately read/export GROQ_API_KEY instead.
+If authentication fails, the existing credential or its permissions must be fixed
+in [Groq Console](https://console.groq.com/keys); changing application code cannot
+make a rejected credential valid. Replace/revoke an invalid key privately and use
+the same Terminal session to launch the app. Do not paste keys into chat, source,
+shell command history or screenshots. The zsh `read -rs` prompt hides input:
+
+```zsh
+source .venv/bin/activate
+read -rs "GROQ_API_KEY?Groq API key: "
+export GROQ_API_KEY
+printf '\n'
+export LLM_PROVIDER=groq
+export LLM_FALLBACK_ENABLED=false
+docker compose up -d --wait
+python -m src.reports --component "Token Vault" --status failed
+```
+
+Check the **actual** report provider and grounding warnings. Deterministic output
+is not evidence of cloud success. To return to offline reporting, select
+`LLM_PROVIDER=deterministic`. Environment exports in a separate Terminal do not
+retroactively update an already-running app or coding-assistant process; restart
+the app from that same configured Terminal. No real key is stored by these commands.
+
 For local reporting, run `ollama pull qwen3:8b`, start `ollama serve`, then select
 LLM_PROVIDER=ollama; OLLAMA_BASE_URL defaults to http://localhost:11434.
 Inspect actual provider/model and grounding warnings: HTTP success alone does
