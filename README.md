@@ -544,25 +544,17 @@ the owner must publish the final README and confirm the submission link before s
 
 ## AI assistance disclosure
 
-**OpenAI Codex was used as an AI coding assistant** during development, including
-implementation, debugging, test development, code review and documentation.
-The participant directed the project scope and demo scenarios and supplied
-screenshots from the running application. Automated verification results and
-remaining limitations are recorded in [final validation](docs/final-validation.md).
-
-AI assistance does not replace participant responsibility: the submitting
-participant/team must review and understand the code, verify its claims, and be
-able to explain the graph model, Cypher queries, MCP tools and technical decisions.
-This disclosure is not a claim that every generated suggestion was independently
-verified by a human. Using Codex for development does **not** add an OpenAI API
-or package dependency to the application; runtime providers remain Gemini, Groq,
-Ollama and deterministic reporting.
+OpenAI Codex was used for coding assistance, debugging, testing, code review and
+documentation. The participant directed the project, reviewed the implementation
+and remains responsible for understanding and validating the submitted work.
+Codex is not a runtime dependency of BlastRadius AI.
 
 ## Team, ownership and conduct
 
-Author attribution: **Kadempally Sai Krish Karthik**, as recorded in [LICENSE](LICENSE).
-Confirm the submission team roster and add the owner-recorded demo link before
-submitting.
+BlastRadius AI is the joint work of **K Sai Krish Karthi** and **K Tanvi**.
+Add the owner-recorded demo link before submitting.
+
+The existing copyright attribution in [LICENSE](LICENSE) is unchanged.
 
 Application code is licensed under the **MIT License**. Third-party components
 retain their own licenses. No database source is vendored, and no deployment,
