@@ -533,14 +533,6 @@ signals, versioned snapshots, calibrated risk weights, verified failover metadat
 authenticated multi-tenant access and provenance-linked runbook/postmortem
 retrieval. Each requires its own permission, privacy and validation design.
 
-## Public source repository
-
-Source: [krishh0310/Blastradius-ai](https://github.com/krishh0310/Blastradius-ai).
-On October 17, 2026, an unauthenticated GitHub API check confirmed public
-visibility and `main` at `c0c26484b5af6b42c26df51de1d25bdae63a1aa1`, matching
-the local committed application revision. No sign-in was required for that check.
-This verifies the committed code at that revision, not subsequent unpushed edits;
-the owner must publish the final README and confirm the submission link before submitting.
 
 ## AI assistance disclosure
 
@@ -552,7 +544,6 @@ Codex is not a runtime dependency of BlastRadius AI.
 ## Team, ownership and conduct
 
 BlastRadius AI is the joint work of **K Sai Krish Karthik** and **K Tanvi**.
-Add the owner-recorded demo link before submitting.
 
 The existing copyright attribution in [LICENSE](LICENSE) is unchanged.
 
