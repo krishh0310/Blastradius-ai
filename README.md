@@ -22,6 +22,15 @@ Built for **Graph Hacks: Context for AI Agents · Track 01 — Agents That Act o
 *Real desktop capture from October 16, 2026. It predates the MCP trace and
 confirmation controls; see [screenshots](#screenshots) for capture status.*
 
+## Hackathon submission
+
+| Required item | Where to find it |
+|---|---|
+| Public source-code repository | [krishh0310/Blastradius-ai](https://github.com/krishh0310/Blastradius-ai) |
+| Setup instructions and graph data model | [Quick start](#quick-start), [knowledge-graph schema](#knowledge-graph-schema) and [detailed setup](docs/setup.md) |
+| Cypher queries and graph algorithms | [Example Cypher](#example-cypher), [graph algorithms](#graph-algorithms-and-explainable-risk), [native query implementation](src/native_queries.py) and [analytics implementation](src/analytics.py) |
+| Track entered | **Track 01 — Agents That Act on Connected Data** |
+
 ## The problem
 
 An outage rarely stops at the component that fails. A shared dependency can affect
@@ -136,9 +145,10 @@ depth 8 and uses deterministic planning/reporting. It makes no cloud-provider ca
 Mumbai's score is a **worst-case single-region component envelope**, not a regional
 outage probability. A declared alternate does not establish failover readiness.
 
-For presentation preparation, use the [demo script](docs/demo-script.md),
-[manual video checklist](docs/video-checklist.md) and
-[submission checklist](docs/submission-checklist.md).
+For a recording, keep both LLM options off, show the MCP trace and customer path,
+then confirm the fictional mitigation and show its comparison. Hide credentials
+and private tabs. Add a judge-accessible working demo video link before submitting;
+screenshots are not a substitute for the required video.
 
 ## Architecture
 
@@ -437,7 +447,8 @@ The owner supplied current MCP trace, consent and mitigation screenshots in chat
 on October 17. They show eight completed tools and the fictional comparison
 91.62 → 42.62. Original PNGs still need saving into `docs/assets/` before they can
 be linked here; chat review is not an asset import. Narrow-layout checks remain pending.
-[Capture inventory and checklist](docs/submission-checklist.md#screenshots-and-visual-checks)
+Manual narrow/mobile layout, keyboard navigation and accessibility compliance
+remain unverified; automated UI tests do not establish visual accessibility.
 
 ## Security and limitations
 
@@ -509,9 +520,6 @@ docs/                     Technical documentation and real screenshots
 | [Hardening](docs/hardening.md) | Security, reliability and provider boundaries |
 | [Technology decisions](docs/technology-decisions.md) | Official-repository review and dependency rationale |
 | [Final validation](docs/final-validation.md) | Actual results versus unverified claims |
-| [Demo script](docs/demo-script.md) | Presentation narrative and failure backups |
-| [Video checklist](docs/video-checklist.md) | Manual recording sequence; video still pending |
-| [Submission checklist](docs/submission-checklist.md) | Remaining owner actions and capture inventory |
 
 ## Troubleshooting
 

@@ -90,8 +90,8 @@ in the usual screenshot folders; Downloads access was denied, so it was not bypa
 Created: `src/scale.py`, `scripts/scale_benchmark.py`, `tests/test_scale.py`.
 Modified: `src/agent.py`, `src/agent_ui.py`, `src/dashboard_ui.py`,
 `tests/test_agent.py`, `tests/test_agent_ui.py`, `README.md`,
-`docs/agent-tool-trace.md`, `docs/benchmark.md`, `docs/final-validation.md`,
-`docs/submission-checklist.md`. The existing README rewrite was preserved.
+`docs/agent-tool-trace.md`, `docs/benchmark.md`, `docs/final-validation.md`.
+The existing README rewrite was preserved.
 No topology, dependency, configuration, existing screenshot or license was removed.
 
 Run from the repository root in the existing Python 3.12 environment:
@@ -250,14 +250,14 @@ Tests: `test_tooling.py`, `test_agent.py`, `test_actions.py`, `test_agent_ui.py`
 `test_mcp_integration.py`, `test_native_queries.py`, `test_demo_shortcuts.py`.
 
 Documentation: `README.md`; `docs/mcp-tooling.md`, `agent-tool-trace.md`,
-`graph-gated-actions.md`, `video-checklist.md`, `demo-script.md`, `setup.md`,
-`hardening.md`, `submission-checklist.md`, `final-validation.md`. No existing
+`graph-gated-actions.md`, `setup.md`, `hardening.md`, `final-validation.md`. No existing
 technical document or screenshot was removed. New source/data do not contain keys.
 
 ### Remaining limitations / submission blockers
 
 **Owner-recorded working demo video: NOT COMPLETE.** This undeployed submission
-is not marked submission-ready. Follow the [manual checklist](video-checklist.md).
+is not marked submission-ready. The [README demo instructions](../README.md#the-three-action-demo)
+describe the flow to record; add an accessible working video link before submission.
 New trace screenshots and manual narrow/wide visual checks are also pending;
 the five existing images are genuine **2026-10-16 pre-MCP** desktop captures.
 No remote CI result is claimed. Fresh virtual environment is not a brand-new Mac.
