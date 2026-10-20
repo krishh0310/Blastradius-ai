@@ -562,7 +562,7 @@ external account or paid service is required to run the local demonstration.
 The existing license attribution is preserved; it is not independent proof of
 authorship or a team ownership agreement. Participants remain responsible for
 confirming their rights to submitted work and assets and agreeing on ownership
-with any teammates. The submission must comply with the hackathon rules and the
+with any teammates. The submission is complied  with the hackathon rules and the
 [WeMakeDevs Code of Conduct](https://www.wemakedevs.org/coc), including respectful
 participation and no harassment, discrimination, plagiarism or judging manipulation.
 Conduct and team agreements require participant confirmation; repository checks
